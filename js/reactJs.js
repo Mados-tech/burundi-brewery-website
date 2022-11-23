@@ -2,10 +2,13 @@ async function postData(url = '', data = {}) {
     return await fetch(url, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
         },
         body: JSON.stringify(data)
-    }).then(response => response.json());
+    }).then(response => response.json()).catch((e)=>{
+        console.log(e);
+        return {};
+    });
 }
 
 function SubscribeToNewsLetter() {
@@ -20,7 +23,7 @@ function SubscribeToNewsLetter() {
         setLoading(true);
         setSuccess('');
         setError('');
-        postData('http://18.234.207.10:8000/api/subscribe-newsletter', { Email: email }).then((response) => {
+        postData('http://192.168.1.101:8000/brewery/api/blog/subscribe-newsletter', { Email: email }).then((response) => {
             setLoading(false);
             if (response.id && response.email) {
                 setSuccess('Votre e-mail a été enregistré avec succès');
@@ -142,43 +145,41 @@ function ContactUsForm() {
     }
 
     const handleSubmit = (event) => {
-        event.preventDefault();
-        setAsync(true);
+        event.preventDefault();       
         setSuccess('');
         setError('');
         console.log(form);
-        postData('https://server.cluster.madosgroup.com/automator/api/mailer/sendmail/', {
-            subject: 'Contact from Website',
-            email: ['nbkassumanidieudonne@gmail.com', 'atibudan2@gmail.com'],
-            template: 'mados-home-email-checker',
-            variables: {
-                code: form.message,
-                email: form.email,
-            }
-        }).then((response) => {
+        if(form?.Email?.length && form?.Name?.length && form?.Message?.length){
+            setAsync(true);
+            postData('http://192.168.1.101:8000/brewery/api/blog/contactus', form).then((response) => {
             setAsync(false);
             if (response.task) {
                 setSuccess('Votre message a été envoyé avec succès');
                 formRef.current.reset();
+                setForm({});
             } else {
                 console.log('Failure', response);
                 setError("Une erreur s'est produite, vérifiez votre connexion Internet, puis réessayez.")
             }
         })
+        }else{
+            setError('Tout les champs sont obligatoires.');
+        }
+        
     }
 
     return <form ref={formRef} className="contact-form" onChange={handleChange} onSubmit={handleSubmit}>
         <div className="input-labeled">
             <label>Votre nom</label>
-            <input placeholder="Noms" name="name" />
+            <input placeholder="Noms" name="Name" />
         </div>
         <div className="input-labeled">
             <label>Adresse e-mail</label>
-            <input placeholder="Adresse e-mail" name="email" />
+            <input placeholder="Adresse e-mail" name="Email" />
         </div>
         <div className="input-labeled">
             <label>Message</label>
-            <textarea placeholder="Message" name="message"></textarea>
+            <textarea placeholder="Message" name="Message"></textarea>
         </div>
         <div className='flex-row column-gap-middle text-close'>
             {errorMessage.length ? <p className='p-error'>{errorMessage}</p> : <></>}

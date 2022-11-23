@@ -35,7 +35,8 @@ body {
     position: relative;
 }
 
-section, .duo {
+section,
+.duo {
     width: 100%;
     max-width: 100%;
     display: flex;
@@ -43,7 +44,7 @@ section, .duo {
     height: auto;
 }
 
-section{
+section {
     margin-top: 2rem;
     position: relative;
 }
@@ -78,7 +79,8 @@ a {
     color: var(--text);
 }
 
-p span, p a{
+p span,
+p a {
     color: var(--green);
     cursor: pointer;
 }
@@ -116,7 +118,7 @@ p span, p a{
     /* background-color: red; */
 }
 
-.logo-named{
+.logo-named {
     display: flex;
     flex-direction: row;
     column-gap: 1rem;
@@ -125,12 +127,12 @@ p span, p a{
     white-space: nowrap;
 }
 
-.logo-named img{
+.logo-named img {
     height: 3rem;
     max-height: 3rem;
 }
 
-.logoName{
+.logoName {
     color: var(--green);
 }
 
@@ -151,6 +153,9 @@ p span, p a{
 
 .navbar-actions {
     column-gap: 1.5rem;
+    flex-wrap: wrap;
+    row-gap: 1rem;
+    justify-content: flex-end;
 }
 
 .navbar-actions a,
@@ -181,7 +186,8 @@ p span, p a{
     display: flex;
 }
 
-.curtain, .curtain2 {
+.curtain,
+.curtain2 {
     width: 100%;
     background-image: url(https://www.burundibrewery.com/wp-content/uploads/2022/07/Image-visite-president-Bbrew2.jpg);
     height: 100%;
@@ -194,7 +200,7 @@ p span, p a{
     background-repeat: no-repeat;
 }
 
-.curtain2{
+.curtain2 {
     background: linear-gradient(90deg, var(--title) 0%, var(--text) 40%, var(--green) 100%);
     position: absolute;
 }
@@ -254,7 +260,7 @@ p span, p a{
     font-size: clamp(1rem, 0.5856rem + 2.21vw, 2rem);
 }
 
-.p-medium{
+.p-medium {
     font-size: clamp(1rem, 1.2rem, 2rem);
 }
 
@@ -299,7 +305,7 @@ p span, p a{
     padding: 2rem;
 }
 
-.duo-right{
+.duo-right {
     height: 100%;
     min-height: 100%;
 }
@@ -368,7 +374,7 @@ p span, p a{
     /* padding: 1rem 1.5rem; */
 }
 
-footer{
+footer {
     display: flex;
     flex-direction: column;
     height: auto;
@@ -388,7 +394,8 @@ footer{
     grid-gap: 2rem;
     align-items: flex-start;
 }
-.footer-bottom{
+
+.footer-bottom {
     padding: 2rem 1.5rem;
     display: flex;
     flex-direction: column;
@@ -399,7 +406,7 @@ footer{
     border-top: .1rem solid var(--greenWhite);
 }
 
-.footer-bottom p{
+.footer-bottom p {
     text-align: center;
     padding: 0rem 3rem;
 }
@@ -453,7 +460,8 @@ textarea {
 input,
 select,
 input:focus,
-button, textarea {
+button,
+textarea {
     background-color: var(--cardColor);
     outline: none;
     border: none;
@@ -467,11 +475,12 @@ button, textarea {
     border: .1rem solid var(--text);
 }
 
-input:focus, textarea:focus{
+input:focus,
+textarea:focus {
     border: .1rem solid var(--green);
 }
 
-textarea{
+textarea {
     height: 10rem;
 }
 
@@ -536,7 +545,7 @@ button {
     object-fit: cover;
 }
 
-.presentor-media{
+.presentor-media {
     row-gap: 1.5rem;
 }
 
@@ -558,7 +567,7 @@ button {
 }
 
 
-.galley{
+.galley {
     height: 100%;
     width: 100%;
     background-color: var(--card);
@@ -567,13 +576,13 @@ button {
     overflow: hidden;
 }
 
-.galley img{
+.galley img {
     height: 25rem;
     max-height: 25rem;
     object-fit: contain;
 }
 
-.gallery-actions{
+.gallery-actions {
     padding: 2rem 1.5rem;
     display: flex;
     flex-direction: row;
@@ -582,7 +591,8 @@ button {
     column-gap: 1rem;
 }
 
-.gallery-actions i, .products-displayer i{
+.gallery-actions i,
+.products-displayer i {
     font-size: larger;
     height: 3rem;
     min-height: 3rem;
@@ -595,17 +605,18 @@ button {
     cursor: pointer;
 }
 
-.gallery-actions i:hover, .products-displayer i:hover{
+.gallery-actions i:hover,
+.products-displayer i:hover {
     box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
     background-color: var(--card);
 }
 
-.gallery-acions-arrows{
+.gallery-acions-arrows {
     display: flex;
     column-gap: 1rem;
 }
 
-#contact-us{
+#contact-us {
     background-color: var(--bgColor);
     display: flex;
     flex-direction: row;
@@ -614,7 +625,7 @@ button {
     justify-content: space-between;
 }
 
-.contact-info{
+.contact-info {
     display: flex;
     flex-direction: column;
     row-gap: 3rem;
@@ -622,30 +633,30 @@ button {
     padding: 4rem 3rem;
 }
 
-.contact-info-box{
+.contact-info-box {
     display: flex;
     flex-direction: column;
     row-gap: 1rem;
 }
 
-.flex-row{
+.flex-row {
     display: flex;
 }
 
 
-.single-contact{
+.single-contact {
     padding: .5rem 0rem;
     cursor: pointer;
     width: fit-content;
     border-radius: .4rem;
 }
 
-.single-contact i{
+.single-contact i {
     font-size: larger;
     color: var(--greenLight);
 }
 
-.contact-form{
+.contact-form {
     padding: 2rem;
     background-color: var(--greenWhite);
     padding: 4rem;
@@ -654,24 +665,24 @@ button {
     row-gap: 2rem;
 }
 
-.input-labeled{
+.input-labeled {
     display: flex;
     flex-direction: column;
     row-gap: .5rem;
 }
 
-.input-labeled label{
-    font-size:medium;
+.input-labeled label {
+    font-size: medium;
     color: var(--text);
 }
 
-.contact-form button{
+.contact-form button {
     font-weight: bold;
     width: 100%;
     font-size: medium;
-} 
+}
 
-.products-displayer{
+.products-displayer {
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -685,7 +696,7 @@ button {
     row-gap: 1.5rem;
 }
 
-.products-displayer-details{
+.products-displayer-details {
     height: 100%;
     padding: 2rem;
     display: flex;
@@ -695,7 +706,7 @@ button {
     column-gap: 1rem;
 }
 
-.products-displayer-details img{
+.products-displayer-details img {
     height: 100%;
     max-height: 100%;
     min-width: 18rem;
@@ -704,7 +715,7 @@ button {
     object-fit: contain;
 }
 
-.products-displayer-actions{
+.products-displayer-actions {
     width: 100%;
     display: flex;
     flex-direction: row;
@@ -713,7 +724,7 @@ button {
     padding: 0rem 1.5rem;
 }
 
-.l-indicator{
+.l-indicator {
     display: flex;
     flex-direction: row;
     column-gap: 1rem;
@@ -721,7 +732,7 @@ button {
     width: fit-content;
 }
 
-.single-l{
+.single-l {
     width: 1rem;
     height: 1rem;
     min-height: 1rem;
@@ -732,22 +743,55 @@ button {
     border: .1rem solid var(--greenLight);
 }
 
-.single-l:hover{
+.single-l:hover {
     background-color: var(--yellowWhite);
 }
 
-.single-l-selected{
+.single-l-selected {
     background-color: var(--green);
 }
 
-.colored{
+.colored {
     color: var(--green);
 }
 
-.large-paragraph{
+.large-paragraph {
     display: flex;
     flex-direction: column;
     row-gap: 1.5rem;
 }
 
 
+@media screen and (max-width : 1250px) {
+    .navbar-actions {
+        display: none;
+    }
+}
+
+@media screen and (max-width : 920px) {
+
+    .duo,
+    #contact-us {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .duo-left,
+    .duo-right,
+    .presentor-media {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 2rem;
+    }
+
+    .contact-form {
+        padding: 2rem 1.5rem;
+    }
+
+    .navbar {
+        padding: 1rem 1.5rem;
+    }
+
+}

@@ -22,6 +22,10 @@ export const NavBar = (locale) => {
             en: 'Job offer and news',
             fr: "Offre d'emploi et actualités",
         }[locale]}</a>
+        <a href=''>${{
+            en: 'Expression of interest',
+            fr: "Manifestation d'interet",
+        }[locale]}</a>
         </div>
     `;
 }
