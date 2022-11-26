@@ -17,6 +17,12 @@
 </head>
 
 <body>
+    <div class="side-menu">
+        <div id="nav-header" className="flex-row ">
+            <i class="fa fa-xmark action-icon" onclick="handleCloseSideMenu()"></i>
+        </div>
+        <div class="navbar"></div>
+    </div>
     <div class="navbar"></div>
     <section id="welcome">
         <div class="cover"></div>
@@ -113,7 +119,8 @@
             </p>
         </div>
         <div class="duo-right">
-            <img class="section-img" src="https://www.burundibrewery.com/wp-content/uploads/2022/07/Image-visite-president-Bbrew2.jpg"
+            <img class="section-img"
+                src="https://www.burundibrewery.com/wp-content/uploads/2022/07/Image-visite-president-Bbrew2.jpg"
                 alt="" />
         </div>
     </section>
@@ -122,7 +129,8 @@
         <div class="duo-left contact-info">
             <div class="contact-info-box">
                 <h1 class="large-title">Contactez-nous</h1>
-                <p>Pour plus d'informations. S'il vous plaît contactez-nous sur les contacts donnés ou rejoignez-nous à notre bureau pour plus
+                <p>Pour plus d'informations. S'il vous plaît contactez-nous sur les contacts donnés ou rejoignez-nous à
+                    notre bureau pour plus
                     de clarification.</br>Remplissez le formulaire et notre équipe vous répondra dans les 24 heures.</p>
             </div>
             <div class="contact-info-box">
@@ -147,49 +155,17 @@
         <div id="contact-us-form" class="duo-right"></div>
     </section>
     <section id="media"></section>
-    <footer id="footer">
-        <div class="footer-header">
-            <div class="foo-block">
-                <a href="#about">Historique</a>
-                <a href="#profile">Missions stratégiques </a>
-                <a href="#vision">Vision</a>
-                <a href="#products">Nos produits</a>
-                <a href="#media">Galerie</a>
-            </div>
-            <div class="foo-block">
-                <a>Manifestation d'intérêt</a>
-                <a>Offre d'emploi</a>
-                <a>Actualités</a>
-            </div>
-            <!-- <div class="foo-block">
-                <a>Notre agenda</a>
-                <a>Notre code de conduite</a>
-            </div> -->
-            <div class="foo-block">
-                <p>Social</p>
-                <div class="social-media">
-                    <a target="_blank" href="https://facebook.com/burundibrewery"><i
-                            class="fa-brands fa-facebook"></i></a>
-                    <a target="_blank" href="https://twitter.com/burundibrewery"><i
-                            class="fa-brands fa-twitter"></i></a>
-                    <a target="_blank" href="https://instagram.com/burundibrewery"><i
-                            class="fa-brands fa-instagram"></i></a>
-                    <a target="_blank" href="https://youtube.com/burundibrewery"><i
-                            class="fa-brands fa-youtube"></i></a>
-                </div>
-            </div>
-            <div id="newsLetterForm" class="foo-block"></div>
-        </div>
-        <div class="footer-bottom">
-            <p>© Copyright Burundi Brewery. Tous les droits sont réservés</p>
-            <p>Réalisation par <a href="https:madosgroup.com" target="_blank">Mados Group</a></p>
-        </div>
-    </footer>
+    <footer id="footer"></footer>
+    <script>
+        localStorage.setItem('home', '/')
+    </script>
     <script src="./js/logic.js" type="module"></script>
     <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="./js/reactJs.js" defer type="text/babel"></script>
+    <script src="./js/handler.js" defer type="text/javascript"></script>
+
 </body>
 
 </html>

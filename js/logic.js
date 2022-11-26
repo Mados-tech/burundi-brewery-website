@@ -1,17 +1,27 @@
-import { NavBar, Cover, Products } from './components.js';
 
+
+import { NavBar, Cover, Footer } from './components.js';
+
+const homePath = localStorage.getItem('home') ?? '/'
 
 function innerHTML(key, html) {
     if (document.querySelector(key)) {
-        document.querySelector(key).innerHTML = html;
+        document.querySelectorAll(key).forEach((element) => {
+            element.innerHTML = html;
+        });
     }
 }
 
-function handleLanguageChange({ locale = 'fr' }) {
-    innerHTML('.navbar', NavBar(locale));
+function insertTemplates({ locale = 'fr' }) {
+    innerHTML('.navbar', NavBar(locale, homePath));
     innerHTML('.cover', Cover(locale));
-    // innerHTML('#products', Products(locale));
+    innerHTML('#footer', Footer(locale, homePath));
 }
+insertTemplates({ locale: 'fr' });
 
-handleLanguageChange({ locale: 'fr' });
+
+
+
+
+
 

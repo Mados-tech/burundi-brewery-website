@@ -1,31 +1,39 @@
-export const NavBar = (locale) => {
+const systemBlogBaseUrl = 'http://192.168.1.100:3000';
+
+export const NavBar = (locale, homePath) => {
     return `
-        
-        <div class="logo-named">
+        <a href='${homePath}' class="logo-named">
             <img alt="" src="https://dpictures.s3.amazonaws.com/pv-d/20221119_072215.png"/>
             <h1 class="headline1 logoName">BURUNDI BREWERY</h1>
-        </div>
+        </a>
         <div class="navbar-actions flex column-gap-middle">
-            <a href='#about'>${{
+            <a href='${homePath}#about' onclick="handleCloseSideMenu()">${{
             en: 'Who are we ?',
             fr: 'Qui sommes nous ?',
         }[locale]}</a>
-            <a href='#products'>${{
+            <a href='${homePath}#products'onclick="handleCloseSideMenu()">${{
             en: 'Our products',
             fr: 'Nos produits',
         }[locale]}</a>
-        <a href='#contact-us'>${{
+        <a href='${homePath}#contact-us' onclick="handleCloseSideMenu()">${{
             en: 'Contact us',
             fr: 'Contactez-nous',
         }[locale]}</a>
-        <a href=''>${{
-            en: 'Job offer and news',
-            fr: "Offre d'emploi et actualités",
+        <a href='${systemBlogBaseUrl}' onclick="handleCloseSideMenu()">${{
+            en: 'News',
+            fr: "Actualités",
         }[locale]}</a>
-        <a href=''>${{
+        <a href='${homePath}jobs' onclick="handleCloseSideMenu()">${{
+            en: 'Job offer',
+            fr: "Offre d'emploi",
+        }[locale]}</a>
+        <a href='${homePath}eoi' onclick="handleCloseSideMenu()">${{
             en: 'Expression of interest',
             fr: "Manifestation d'interet",
         }[locale]}</a>
+        </div>
+        <div id="nav-icon">
+            <i id="menu-icon-button" class="fa fa-bars action-icon" onclick="handleBarButton()"></i>
         </div>
     `;
 }
@@ -54,49 +62,39 @@ export const Cover = (locale) => {
     `;
 }
 
-export const Products = (locale) => {
-    const products = [
-        {
-            name: 'Soma Burundi',
-            description: {
-                fr: "Notre bière Soma Burundi a la spécificité de ne pas contenir de sucre ajouté et le taux d’alcool est de 6%. La matière première, à savoir la banane et l’eau sont disponibles sur place sauf le malt qui est importé. Burundi Brewery utilise deux sortes de bananes à savoir la banane FIA 17 et la banane FIA 25.",
-                en: "Our Soma Burundi beer has the specificity of not containing added sugar and the alcohol content is 6%. The raw material, namely bananas and water are available on site except for the malt which is imported. Burundi Brewery uses two kinds of bananas namely the FIA ​​17 banana and the FIA ​​25 banana.",
-            },
-            image: 'https://www.heineken.com/media-us/01pfxdqq/heineken-original-bottle.png?quality=85',
-        },
-        {
-            name: 'Sangwe',
-            description: {
-                en: "Another essential ingredient for the production of Soma Burundi beer is water. The Burundi Brewery found some in the Mwumba commune, 4 km from the town of Ngozi where this company is based. We found good quality thermal water there and decided to produce mineral water called Sangwe.",
-                fr: "Un autre ingrédient indispensable à la production de la bière Soma Burundi est l’eau. La brasserie Burundi Brewery en a trouvé dans la commune Mwumba à 4 km de la ville de Ngozi où est basée cette entreprise. Nous avons trouvé une bonne qualité d’eau thermique à cet endroit et nous avons décidé de produire de l’eau minérale baptisée Sangwe.",
-            },
-            image: 'https://pngimg.com/uploads/water_bottle/water_bottle_PNG98959.png',
-        },
-        {
-            name: 'Jus Ok & One Burundi',
-            description: {
-                fr: "Le projet de production du jus d’ananas n’est pas abandonné pour autant. Neuf (9) cuves pouvant contenir 800 hectolitres ont été achetés pour appuyer les quatres (4) autres cuves de Septante (70) hectolitres existant. Nous projetons d’augmenter la production, de signer des contrats avec d’autres brasseries et de produire un jus d’ananas mais aussi un jus de banane.",
-                en: "The pineapple juice production project has not been abandoned, however. Nine (9) tanks that can contain 800 hectoliters have been purchased to support the four (4) other existing tanks of seventy (70) hectoliters. We plan to increase production, sign contracts with other breweries and produce pineapple juice but also banana juice.",
-            },
-            image: 'https://www.freeiconspng.com/thumbs/pepsi-png/pepsi-png-image-22.png',
-        },
-    ];
+export const Footer = (locale, homePath) => {
     return `
-        ${products.map((e, i) => {
-        return `
-        <div class="single-product flex column-gap-middle">
-        <div class="product-info">
-            <h1 class="headline1">${e.name}</h1>
-            <p>${e.description[locale]}</p>
-            <a class="slide__prev" href="#slides__4" title="Next"></a>
+    <div class="footer-header">
+        <div class="foo-block">
+            <a href="${homePath}#about">Historique</a>
+            <a href="${homePath}#profile">Missions stratégiques </a>
+            <a href="${homePath}#vision">Vision</a>
+            <a href="${homePath}#products">Nos produits</a>
+            <a href="${homePath}#media">Galerie</a>
         </div>
-        <div class="product-image">
-            <img class="section-img"
-                src=${e.image} alt="" />
+        <div class="foo-block">
+            <a href='${homePath}eoi'>Manifestation d'intérêt</a>
+            <a href='${homePath}jobs'>Offre d'emploi</a>
+            <a href='${systemBlogBaseUrl}'>Actualités</a>
         </div>
+        <div class="foo-block">
+            <p>Social</p>
+            <div class="social-media">
+                <a target="_blank" href="https://facebook.com/burundibrewery"><i
+                        class="fa-brands fa-facebook"></i></a>
+                <a target="_blank" href="https://twitter.com/burundibrewery"><i
+                        class="fa-brands fa-twitter"></i></a>
+                <a target="_blank" href="https://instagram.com/burundibrewery"><i
+                        class="fa-brands fa-instagram"></i></a>
+                <a target="_blank" href="https://youtube.com/burundibrewery"><i
+                        class="fa-brands fa-youtube"></i></a>
+            </div>
+        </div>
+        <div id="newsLetterForm" class="foo-block"></div>
     </div>
-        `
-    })}
-    
+    <div class="footer-bottom">
+        <p>© Copyright Burundi Brewery. Tous les droits sont réservés</p>
+        <p>Réalisation par <a href="https:madosgroup.com" target="_blank">Mados Group</a></p>
+    </div>
     `
 }

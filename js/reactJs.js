@@ -1,15 +1,43 @@
+const systemBaseUrl = 'http://192.168.1.102:8000/brewery/api';
+
 async function postData(url = '', data = {}) {
-    return await fetch(url, {
+    return await fetch(`${systemBaseUrl}/${url}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify(data)
-    }).then(response => response.json()).catch((e)=>{
+    }).then(response => response.json()).catch((e) => {
         console.log(e);
         return {};
     });
 }
+
+async function fetchData(url = '') {
+    return await fetch(`${systemBaseUrl}/${url}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    }).then(response => response.json()).catch((e) => {
+        console.log(e);
+        return {};
+    });
+}
+
+async function postDataWithFiles({ url = '', data = new FormData() }) {
+    return await fetch(`${systemBaseUrl}/${url}`, {
+        method: 'POST',
+        headers: {
+            // 'Content-Type': 'multipart/form-data',
+        },
+        body: data,
+    }).then(response => response.json()).catch((e) => {
+        console.log(e);
+        return {};
+    });
+}
+
 
 function SubscribeToNewsLetter() {
     const [email, setEmail] = React.useState('');
@@ -20,19 +48,24 @@ function SubscribeToNewsLetter() {
     const formRef = React.useRef();
 
     function sendMail() {
-        setLoading(true);
         setSuccess('');
         setError('');
-        postData('http://192.168.1.101:8000/brewery/api/blog/subscribe-newsletter', { Email: email }).then((response) => {
-            setLoading(false);
-            if (response.id && response.email) {
-                setSuccess('Votre e-mail a été enregistré avec succès');
-                formRef.current.reset();
-            } else {
-                console.log('Failure', response);
-                setError("Une erreur s'est produite, soit l'e-mail existe déjà dans notre liste de diffusion, soit vérifiez votre connexion Internet.")
-            }
-        })
+        if (email.length) {
+            setLoading(true);
+            postData('blog/subscribe-newsletter', { Email: email }).then((response) => {
+                setLoading(false);
+                if (response.id && response.email) {
+                    setSuccess('Votre e-mail a été enregistré avec succès');
+                    formRef.current.reset();
+                } else {
+                    console.log('Failure', response);
+                    setError("Une erreur s'est produite, soit l'e-mail existe déjà dans notre liste de diffusion, soit vérifiez votre connexion Internet.")
+                }
+            })
+        } else {
+            setError('Tout les champs sont obligatoires.');
+        }
+
     }
 
     return (
@@ -115,16 +148,10 @@ function Gallery() {
                         event.stopPropagation();
                         handleActions({ isNext: false });
                     }} /> : <></>}
-                    {/* <i className='fa fa-play' /> */}
                     {index < (dummy2.length - 1) ? <i className='fa fa-arrow-right' onClick={(event) => {
                         event.stopPropagation();
                         handleActions({ isNext: true });
                     }} /> : <></>}
-
-                    {/* <div/>
-                    <div className='gallery-acions-arrows flex-row column-gap-middle'>
-                        
-                    </div> */}
                 </div>
             </div>
         </div>
@@ -145,41 +172,41 @@ function ContactUsForm() {
     }
 
     const handleSubmit = (event) => {
-        event.preventDefault();       
+        event.preventDefault();
         setSuccess('');
         setError('');
         console.log(form);
-        if(form?.Email?.length && form?.Name?.length && form?.Message?.length){
+        if (form?.Email?.length && form?.Name?.length && form?.Message?.length) {
             setAsync(true);
-            postData('http://192.168.1.101:8000/brewery/api/blog/contactus', form).then((response) => {
-            setAsync(false);
-            if (response.task) {
-                setSuccess('Votre message a été envoyé avec succès');
-                formRef.current.reset();
-                setForm({});
-            } else {
-                console.log('Failure', response);
-                setError("Une erreur s'est produite, vérifiez votre connexion Internet, puis réessayez.")
-            }
-        })
-        }else{
+            postData('blog/contactus', form).then((response) => {
+                setAsync(false);
+                if (response.task) {
+                    setSuccess('Votre message a été envoyé avec succès');
+                    formRef.current.reset();
+                    setForm({});
+                } else {
+                    console.log('Failure', response);
+                    setError("Une erreur s'est produite, vérifiez votre connexion Internet, puis réessayez.")
+                }
+            })
+        } else {
             setError('Tout les champs sont obligatoires.');
         }
-        
+
     }
 
     return <form ref={formRef} className="contact-form" onChange={handleChange} onSubmit={handleSubmit}>
         <div className="input-labeled">
             <label>Votre nom</label>
-            <input placeholder="Noms" name="Name" />
+            <input placeholder="Noms" name="Name" required />
         </div>
         <div className="input-labeled">
             <label>Adresse e-mail</label>
-            <input placeholder="Adresse e-mail" name="Email" />
+            <input placeholder="Adresse e-mail" name="Email" required />
         </div>
         <div className="input-labeled">
             <label>Message</label>
-            <textarea placeholder="Message" name="Message"></textarea>
+            <textarea placeholder="Message" name="Message" required></textarea>
         </div>
         <div className='flex-row column-gap-middle text-close'>
             {errorMessage.length ? <p className='p-error'>{errorMessage}</p> : <></>}
@@ -190,10 +217,72 @@ function ContactUsForm() {
                 setError('');
             }}>Fermer</p> : <></>}
         </div>
-        <button type='submit'>{isAsync ? "S'il vous plaît, attendez..." : 'Envoyer le message'}</button>
+        <button className={`${isAsync ? 'loading-button' : ''}`} type='submit'>{isAsync ? "S'il vous plaît, attendez..." : 'Envoyer le message'}</button>
     </form>
 }
 
+function EoiForm() {
+
+    const [isAsync, setAsync] = React.useState(false);
+    const [errorMessage, setError] = React.useState('');
+    const [successMessage, setSuccess] = React.useState('');
+    const [formData, setForm] = React.useState(new FormData());
+    const formRef = React.useRef();
+
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        setSuccess('');
+        setError('');
+        console.log(formData.entries);
+        setAsync(true);
+        postDataWithFiles({ url: 'job/eointerest', data: formData }).then((response) => {
+            setAsync(false);
+            if (response.saved) {
+                setSuccess('Votre candidature a été envoyé avec succès');
+                formRef.current.reset();
+                setForm(new FormData());
+            } else {
+                console.log('Failure', response);
+                setError("Une erreur s'est produite, vérifiez votre connexion Internet, puis réessayez.")
+            }
+        })
+
+    }
+
+    return <form ref={formRef} className="contact-form" onSubmit={handleSubmit}>
+        <div className="input-labeled">
+            <label>Nom de l'entreprise</label>
+            <input type="name" placeholder="Entreprise" name="Name" required onChange={(e) => {
+                e.stopPropagation();
+                formData.set('Name', e.target.value);
+            }} />
+        </div>
+        <div className="input-labeled">
+            <label>Adresse e-mail</label>
+            <input type="email" placeholder="Adresse e-mail" name="Email" required onChange={(e) => {
+                e.stopPropagation();
+                formData.set('Email', e.target.value);
+            }} />
+        </div>
+        <div className="input-labeled">
+            <label>Document</label>
+            <input type="file" placeholder="Document" name="Document" required onChange={(e) => {
+                e.stopPropagation();
+                formData.set('Document', e.target.files[0]);
+            }} />
+        </div>
+        <div className='flex-row column-gap-middle text-close'>
+            {errorMessage.length ? <p className='p-error'>{errorMessage}</p> : <></>}
+            {successMessage.length ? <p className='p-success'>{successMessage}</p> : <></>}
+            {errorMessage.length || successMessage.length ? <p className='close' onClick={(event) => {
+                event.stopPropagation();
+                setSuccess('');
+                setError('');
+            }}>Fermer</p> : <></>}
+        </div>
+        <button className={`${isAsync ? 'loading-button' : ''}`} type='submit'>{isAsync ? "S'il vous plaît, attendez..." : 'Envoyer'}</button>
+    </form>
+}
 
 
 function Products() {
@@ -229,7 +318,7 @@ function Products() {
     const [index, setIndex] = React.useState(0);
     const currentProduct = products[index];
     return <div key={Math.random()} className="products-displayer">
-        {/* <h1 className="large-title colored">Nos produits</h1> */}
+        <h1 className="large-title colored">Nos produits</h1>
         <div className="products-displayer-details">
             <h1 className="headline1">{currentProduct.name}</h1>
             <img src={currentProduct.image} />
@@ -262,34 +351,159 @@ function Products() {
 }
 
 
-const newsLetter = ReactDOM.createRoot(document.getElementById('newsLetterForm'));
-const gallery = ReactDOM.createRoot(document.getElementById('media'));
-const contactUs = ReactDOM.createRoot(document.getElementById('contact-us-form'));
-const products = ReactDOM.createRoot(document.getElementById('products'));
+function ApplicationForm({ job = {}, onClose = () => { } }) {
+    const [isAsync, setAsync] = React.useState(false);
+    const [errorMessage, setError] = React.useState('');
+    const [successMessage, setSuccess] = React.useState('');
+    const [formData, setForm] = React.useState(new FormData());
+    const formRef = React.useRef();
 
-newsLetter.render(
-    <React.StrictMode>
-        <SubscribeToNewsLetter />
-    </React.StrictMode>,
-);
+    const handleSubmit = (event) => {
 
-gallery.render(
-    <React.StrictMode>
-        <Gallery />
-    </React.StrictMode>,
-);
+        event.preventDefault();
+        formData.set('Job_id', job.id);
+        setSuccess('');
+        setError('');
+        console.log(formData.entries);
+        setAsync(true);
+        postDataWithFiles({ url: 'job/write/application_namespace', data: formData }).then((response) => {
+            setAsync(false);
+            if (response.id) {
+                setSuccess('Votre candidature a été envoyé avec succès');
+                formRef.current.reset();
+                setForm(new FormData());
+            } else {
+                console.log('Failure', response);
+                setError("Une erreur s'est produite, vérifiez votre connexion Internet, puis réessayez.")
+            }
+        })
 
-contactUs.render(
-    <React.StrictMode>
-        <ContactUsForm />
-    </React.StrictMode>,
-);
+    }
+    return <div className="modal-curtain">
+        <form ref={formRef} className="contact-form application-form" onSubmit={handleSubmit}>
+            <div className="flex-row application-form-header">
+                <h1>Formulaire de candidature pour {job?.title}</h1>
+                <i className='fa fa-xmark action-icon' onClick={(event) => {
+                    event.stopPropagation();
+                    onClose();
+                }} />
+            </div>
+            <div />
+            <div className="input-labeled">
+                <label>Votre nom complet</label>
+                <input type="name" placeholder="Noms" name="Name" required onChange={(e) => {
+                    e.stopPropagation();
+                    formData.set('Name', e.target.value);
+                }} />
+            </div>
+            <div className="input-labeled">
+                <label>Adresse e-mail</label>
+                <input type="email" placeholder="Adresse e-mail" name="Email" required onChange={(e) => {
+                    e.stopPropagation();
+                    formData.set('Email', e.target.value);
+                }} />
+            </div>
+            <div className="input-labeled">
+                <label>Votre CV</label>
+                <input type="file" placeholder="Cv" name="Cv" required onChange={(e) => {
+                    e.stopPropagation();
+                    formData.set('Cv', e.target.files[0]);
+                }} />
+            </div>
+            <div className='flex-row column-gap-middle text-close'>
+                {errorMessage.length ? <p className='p-error'>{errorMessage}</p> : <></>}
+                {successMessage.length ? <p className='p-success'>{successMessage}</p> : <></>}
+                {errorMessage.length || successMessage.length ? <p className='close' onClick={(event) => {
+                    event.stopPropagation();
+                    setSuccess('');
+                    setError('');
+                }}>Fermer</p> : <></>}
+            </div>
+            <button className={`${isAsync ? 'loading-button' : ''}`} type='submit'>{isAsync ? "S'il vous plaît, attendez..." : 'Envoyer'}</button>
+        </form>
+    </div>
+}
 
-products.render(
-    <React.StrictMode>
-        <Products />
-    </React.StrictMode>,
-);
+
+function Jobs() {
+
+    const [fetching, setFetching] = React.useState(false);
+    const [jobs, setJobs] = React.useState([]);
+    const [isAsync, setAsync] = React.useState(false);
+    const [wannaApply, setWannaApply] = React.useState(false);
+    const [currentJob, setCurrentJob] = React.useState({});
+
+    function fetchJobs() {
+        if (!fetching) {
+            setFetching(true);
+            setAsync(true);
+            fetchData('job/findmany/offer_namespace').then((response) => {
+                setFetching(false);
+                setAsync(false);
+                const { data } = response;
+                if (data && data?.length) {
+                    setJobs(response.data);
+                }
+                console.log(response);
+            })
+        }
+    }
+
+
+    React.useEffect(() => {
+        fetchJobs();
+    }, []);
+
+
+
+    return <div className="job-displayer">
+        {wannaApply && jobs.length ? <ApplicationForm job={currentJob} onClose={() => {
+            setWannaApply(false);
+            setCurrentJob({});
+        }} /> : <></>}
+        <h1 className="large-title">Offre d'emploi</h1>
+        {jobs.length
+            ? <div className='jobs'>
+                {jobs.map((e) => {
+                    const { id, description, limit_day_to_submit, document, title } = e;
+                    return <div className="single-job" key={id}>
+                        <div className='job-header flex-row column-gap-middle'>
+                            <p className="p-medium bold">{title}</p>
+                            <button onClick={(event) => {
+                                event.stopPropagation();
+                                setCurrentJob(e);
+                                setWannaApply(true);
+                            }}>Postuler</button>
+                        </div>
+                        <div dangerouslySetInnerHTML={{ __html: description }}></div>
+                        <p>Obtenez la description complète de cette offre <a href={document} target='_blank' className="bold">ici</a>.</p>
+                        <p>Date limite {new Date(limit_day_to_submit).toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                    </div>
+                })}
+            </div>
+            : isAsync === true
+                ? <p>Veuillez patienter ...</p>
+                : <p>Aucune offre d'emploi disponible</p>
+        }
+    </div>
+}
+
+function ReactCompRender(id, component) {
+    if (!id) return;
+    const element = document.getElementById(id);
+    if (element) {
+        ReactDOM.createRoot(element).render(component);
+    }
+}
+
+ReactCompRender('newsLetterForm', <SubscribeToNewsLetter />);
+ReactCompRender('media', <Gallery />);
+ReactCompRender('contact-us-form', <ContactUsForm />);
+ReactCompRender('eoi-form', <EoiForm />);
+ReactCompRender('products', <Products />);
+ReactCompRender('jobs', <Jobs />);
+
+
 
 
 
