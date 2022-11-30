@@ -95,7 +95,7 @@ export const Footer = (locale, homePath) => {
     </div>
     <div class="footer-bottom">
         <p>© Copyright Burundi Brewery. Tous les droits sont réservés</p>
-        <p>Réalisation par <a href="https:madosgroup.com" target="_blank">Mados Group</a></p>
+        <p>Réalisation par <a href="https://madosgroup.com/" target="_blank">Mados Group</a></p>
     </div>
     `
 }
