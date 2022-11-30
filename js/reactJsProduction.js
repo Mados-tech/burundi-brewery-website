@@ -1,4 +1,6 @@
 const systemBaseUrl = 'https://server.cluster.madosgroup.com/brewery/api';
+
+console.log('Welcome to burundi brewery...');
 async function postData(url = '', data = {}) {
   return await fetch(`${systemBaseUrl}/${url}`, {
     method: 'POST',
