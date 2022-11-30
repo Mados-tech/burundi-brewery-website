@@ -1,4 +1,4 @@
-const systemBaseUrl = 'http://192.168.1.102:8000/brewery/api';
+const systemBaseUrl = 'https://server.cluster.madosgroup.com/brewery/api';
 
 async function postData(url = '', data = {}) {
     return await fetch(`${systemBaseUrl}/${url}`, {

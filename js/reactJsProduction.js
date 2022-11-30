@@ -1,4 +1,4 @@
-const systemBaseUrl = 'http://192.168.1.102:8000/brewery/api';
+const systemBaseUrl = 'https://server.cluster.madosgroup.com/brewery/api';
 async function postData(url = '', data = {}) {
   return await fetch(`${systemBaseUrl}/${url}`, {
     method: 'POST',
@@ -405,7 +405,7 @@ function Products() {
 }
 function ApplicationForm({
   job = {},
-  onClose = () => {}
+  onClose = () => { }
 }) {
   const [isAsync, setAsync] = React.useState(false);
   const [errorMessage, setError] = React.useState('');
