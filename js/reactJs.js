@@ -1,3 +1,4 @@
+// const systemBaseUrl = 'http://192.168.1.101:8000/brewery/api';
 const systemBaseUrl = 'https://server.cluster.madosgroup.com/brewery/api';
 
 async function postData(url = '', data = {}) {
@@ -98,64 +99,87 @@ function SubscribeToNewsLetter() {
 }
 
 
-function Gallery() {
+function Gallery({ events = [] }) {
+    const [catIndex, setCatIndex] = React.useState(0);
 
-    const [index, setIndex] = React.useState(0);
-    const [playing, setPlay] = React.useState(false);
-    var interval = null;
-    const dummy2 = [
-        "https://www.burundi-forum.org/wp-content/uploads/2020/07/bdi_burundi_brewery_01_2020_akezanet.jpeg",
-        "https://akeza.net/wp-content/uploads/2020/07/Ngozieco1.jpg.png",
-        "https://en.investburundi.bi/images/helix/gallerie/DSC_0461.jpg",
-        "https://burundi-agnews.org/wp-content/uploads/2012/12/BurundiBrewery.jpg",
-        "https://www.burundibrewery.com/wp-content/uploads/elementor/thumbs/N-p8gmzyq8wkwah55qamqc8xd8u4o6tshtk14vg8crug.jpg",
-    ];
 
-    function handleActions({ isNext = true }) {
-        if (isNext && index < (dummy2.length - 1)) {
-            setIndex(index + 1);
-        }
-        if (!isNext && index > 0) {
-            setIndex(index - 1);
-        }
-    }
-
-    function automaticDisplay({ isPlay = true }) {
-        if (isPlay) {
-            interval = setInterval(() => {
-                if (index < (dummy2.length - 1)) {
-                    setIndex(index + 1);
-                } else {
-                    setIndex(0);
-                }
-            }, 1000);
+    function handleSlideGaller(isNext) {
+        const sliderGap = 300;
+        if (!isNext) {
+            document.getElementById('caroussel002_items_gallery').scrollLeft += sliderGap;
         } else {
-            clearInterval(interval);
+            document.getElementById('caroussel002_items_gallery').scrollLeft -= sliderGap;
         }
     }
+    const currentEvent = events[catIndex];
 
-    return <div className='duo'>
+    return events.length ? <div className='duo'>
         <div className="duo-left duo-yellow">
             <p className="rounded-card-p">Media</p>
             <h1 className="large-title">Notre galerie</h1>
             <p className="p-medium">Burundi Brewery est la première brasserie créée par des Burundais depuis que le Burundi existe. L’entreprise Burundi Brewery produit de l’eau minérale des boissons à base de banane et des jus de fruits.</p>
         </div>
         <div className="duo-right gallery-holder">
-            <div className='galley'>
-                <img key={Math.random()} src={dummy2[index]} alt='' />
-                <div className='gallery-actions'>
-                    {index > 0 ? <i className='fa fa-arrow-left' onClick={(event) => {
-                        event.stopPropagation();
-                        handleActions({ isNext: false });
-                    }} /> : <></>}
-                    {index < (dummy2.length - 1) ? <i className='fa fa-arrow-right' onClick={(event) => {
-                        event.stopPropagation();
-                        handleActions({ isNext: true });
-                    }} /> : <></>}
+            <div id="caroussel002_items_gallery" className='caroussel002_items'>
+                <div className='caroussel002_items_icons caroussel002_items_icons_left' onClick={(e) => {
+                    e.stopPropagation();
+                    handleSlideGaller(true);
+                }}>
+                    <i className='fa fa-arrow-left' />
+                </div>
+                {events.map((e, i) => {
+                    return <p
+                        className='categories_displayer_category'
+                        id={catIndex === i ? 'categories_displayer_category_selected' : ''}
+                        key={e.id}
+                        value={e.id}
+                        onClick={(event) => {
+                            event.stopPropagation();
+                            setCatIndex(i);
+                        }}
+                    >{e.title}</p>
+                })}
+                <div className='caroussel002_items_icons caroussel002_items_icons_right' onClick={(e) => {
+                    e.stopPropagation();
+                    handleSlideGaller(false);
+                }}>
+                    <i className='fa fa-arrow-right' />
                 </div>
             </div>
+            <div className="gallery-image-space">
+                <ImagesDisplayer images={currentEvent?.image?.map((e) => e.link)} />
+            </div>
         </div>
-    </div>
+    </div> : <></>
+}
+
+
+function ImagesDisplayer({ images = [] }) {
+    console.log(images);
+
+    const [currentImage, setCurrentImage] = React.useState(0);
+
+    function handleActions({ isNext = true }) {
+        if (!isNext && currentImage > 0) {
+            setCurrentImage(currentImage - 1)
+        }
+
+        if (isNext && currentImage < (images.length - 1)) {
+            setCurrentImage(currentImage + 1)
+        }
+    }
+
+    return images.length ? <div className='slide-show-slides' key={Math.random()}>
+        <a className="prev" onClick={(event) => {
+            event.stopPropagation();
+            handleActions({ isNext: false });
+        }}>&#10094;</a>
+        <a className="next" onClick={(event) => {
+            event.stopPropagation();
+            handleActions({ isNext: true });
+        }}>&#10095;</a>
+        <img className="image-slide" src={images[currentImage]} alt="" />
+    </div> : <p className="p-centered">Aucune image disponible</p>
 }
 
 
@@ -285,27 +309,7 @@ function EoiForm() {
 }
 
 
-function Products() {
-
-
-    const products = [
-        {
-            name: 'Soma Burundi',
-            description: "Notre bière Soma Burundi a la spécificité de ne pas contenir de sucre ajouté et le taux d’alcool est de 6%. La matière première, à savoir la banane et l’eau sont disponibles sur place sauf le malt qui est importé. Burundi Brewery utilise deux sortes de bananes à savoir la banane FIA 17 et la banane FIA 25.",
-            image: './assets/products/soma.png',
-        },
-        {
-            name: 'Sangwe Burundi',
-            description: "Un autre ingrédient indispensable à la production de la bière Soma Burundi est l’eau. La brasserie Burundi Brewery en a trouvé dans la commune Mwumba à 4 km de la ville de Ngozi où est basée cette entreprise. Nous avons trouvé une bonne qualité d’eau thermique à cet endroit et nous avons décidé de produire de l’eau minérale baptisée Sangwe.",
-            image: './assets/products/sangwe.png',
-        },
-        {
-            name: 'Jus Ok & One Burundi',
-            description: "Le projet de production du jus d’ananas n’est pas abandonné pour autant. Neuf (9) cuves pouvant contenir 800 hectolitres ont été achetés pour appuyer les quatres (4) autres cuves de Septante (70) hectolitres existant. Nous projetons d’augmenter la production, de signer des contrats avec d’autres brasseries et de produire un jus d’ananas mais aussi un jus de banane.",
-            image: './assets/products/ok.png',
-        },
-    ];
-
+function Products({ products = [] }) {
     function handleActions({ isNext = true }) {
         if (isNext && index < (products.length - 1)) {
             setIndex(index + 1);
@@ -317,12 +321,15 @@ function Products() {
 
     const [index, setIndex] = React.useState(0);
     const currentProduct = products[index];
-    return <div key={Math.random()} className="products-displayer">
-        <h1 className="large-title colored">Nos produits</h1>
+
+    return products.length ? <div key={Math.random()} className="products-displayer">
+        {/* <h1 className="large-title">Nos produits</h1> */}
         <div className="products-displayer-details">
-            <h1 className="headline1">{currentProduct.name}</h1>
-            <img src={currentProduct.image} />
-            <p className="p-medium">{currentProduct.description}</p>
+            <ImagesDisplayer images={currentProduct?.images.map((e) => e.link)} />
+            <div className="row-gap-middle">
+                <h1 className="headline1">{currentProduct?.name}</h1>
+                <p className="p-medium">{currentProduct?.description}</p>
+            </div>
         </div>
         <div className="products-displayer-actions">
             <i className='fa fa-arrow-left' onClick={(event) => {
@@ -347,7 +354,7 @@ function Products() {
                 handleActions({ isNext: true });
             }} />
         </div>
-    </div>
+    </div> : <></>
 }
 
 
@@ -488,6 +495,114 @@ function Jobs() {
     </div>
 }
 
+function Agencies() {
+
+    const [fetching, setFetching] = React.useState(false);
+    const [jobs, setJobs] = React.useState([]);
+    const [isAsync, setAsync] = React.useState(false);
+    const [wannaApply, setWannaApply] = React.useState(false);
+    const [currentJob, setCurrentJob] = React.useState({});
+
+    function fetchJobs() {
+        if (!fetching) {
+            setFetching(true);
+            setAsync(true);
+            fetchData('blog/findmany/agence_namespace').then((response) => {
+                setFetching(false);
+                setAsync(false);
+                const { data } = response;
+                if (data && data?.length) {
+                    setJobs(response.data);
+                }
+                console.log(response);
+            })
+        }
+    }
+
+
+    React.useEffect(() => {
+        fetchJobs();
+    }, []);
+
+    return <div className="job-displayer">
+        {wannaApply && jobs.length ? <ApplicationForm job={currentJob} onClose={() => {
+            setWannaApply(false);
+            setCurrentJob({});
+        }} /> : <></>}
+        <h1 className="large-title">Nos agences</h1>
+        {jobs.length
+            ? <div className='jobs'>
+                {jobs.map((e) => {
+                    const { id, address, fax, phone, name } = e;
+                    return <div>
+                        <h1>{name}</h1>
+                        <p>{address}</p>
+                        <p>Tel: {phone}</p>
+                        <p>Fax: (+257) {fax}</p>
+                    </div>
+                })}
+            </div>
+            : isAsync === true
+                ? <p>Veuillez patienter ...</p>
+                : <p>Aucune agence disponible</p>
+        }
+    </div>
+}
+
+function Staff({ members = [] }) {
+    return members.length ? <div className="job-displayer staff-members-displayer">
+        <h1 className="large-title">Notre équipe</h1>
+        <div className='staff-members'>
+            {members.map((e) => {
+                const { id, name, phone, email, post, profile } = e;
+                return <div className="single-member">
+                    <img src={profile} alt="" />
+                    <div className="single-member-info">
+                        <p className="p-medium bold">{name}</p>
+                        <p className="p-medium">{post}</p>
+                        <p className="p-contact">{email}</p>
+                        <p className="p-contact">{phone}</p>
+                    </div>
+                </div>
+            })}
+        </div>
+    </div> : <></>
+}
+
+
+function Covers({ covers = [] }) {
+
+    let slideIndex = 0;
+
+    function showSlides() {
+        let i;
+        let slides = document.getElementsByClassName("mySlides");
+        for (i = 0; i < slides.length; i++) {
+            slides[i].style.display = "none";
+        }
+        slideIndex++;
+        if (slideIndex > slides.length) { slideIndex = 1 }
+        slides[slideIndex - 1].style.display = "block";
+        setTimeout(showSlides, 5000); // Change image every 2 seconds
+    }
+
+    React.useEffect(() => {
+        if (covers.length) {
+            showSlides();
+        }
+    }, []);
+
+    return covers.length ? <div class="slideshow-container" style={{
+        backgroundImage: `url(${covers[0].link})`,
+    }}>
+        {covers.map((e) => {
+            return <div class="mySlides fade">
+                <img src={e.link} />
+            </div>
+        })}
+    </div> : <></>
+}
+
 function ReactCompRender(id, component) {
     if (!id) return;
     const element = document.getElementById(id);
@@ -496,12 +611,21 @@ function ReactCompRender(id, component) {
     }
 }
 
+fetchData('blog/view').then((response) => {
+    console.log('Theee', response);
+    const { cover, group_image, member, product } = response;
+    ReactCompRender('products', <Products products={product} />);
+    ReactCompRender('staff', <Staff members={member} />);
+    ReactCompRender('media', <Gallery events={group_image} />);
+    ReactCompRender('slide-from', <Covers covers={cover} />);
+})
+
 ReactCompRender('newsLetterForm', <SubscribeToNewsLetter />);
-ReactCompRender('media', <Gallery />);
 ReactCompRender('contact-us-form', <ContactUsForm />);
 ReactCompRender('eoi-form', <EoiForm />);
-ReactCompRender('products', <Products />);
 ReactCompRender('jobs', <Jobs />);
+ReactCompRender('agencies', <Agencies />);
+
 
 
 

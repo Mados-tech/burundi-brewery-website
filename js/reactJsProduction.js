@@ -1,6 +1,7 @@
-const systemBaseUrl = 'https://server.cluster.madosgroup.com/brewery/api';
+"use strict";
 
-console.log('Welcome to burundi brewery...');
+// const systemBaseUrl = 'http://192.168.1.101:8000/brewery/api';
+const systemBaseUrl = 'https://server.cluster.madosgroup.com/brewery/api';
 async function postData(url = '', data = {}) {
   return await fetch(`${systemBaseUrl}/${url}`, {
     method: 'POST',
@@ -104,37 +105,21 @@ function SubscribeToNewsLetter() {
     className: "fa fa-paper-plane"
   }))));
 }
-function Gallery() {
-  const [index, setIndex] = React.useState(0);
-  const [playing, setPlay] = React.useState(false);
-  var interval = null;
-  const dummy2 = ["https://www.burundi-forum.org/wp-content/uploads/2020/07/bdi_burundi_brewery_01_2020_akezanet.jpeg", "https://akeza.net/wp-content/uploads/2020/07/Ngozieco1.jpg.png", "https://en.investburundi.bi/images/helix/gallerie/DSC_0461.jpg", "https://burundi-agnews.org/wp-content/uploads/2012/12/BurundiBrewery.jpg", "https://www.burundibrewery.com/wp-content/uploads/elementor/thumbs/N-p8gmzyq8wkwah55qamqc8xd8u4o6tshtk14vg8crug.jpg"];
-  function handleActions({
-    isNext = true
-  }) {
-    if (isNext && index < dummy2.length - 1) {
-      setIndex(index + 1);
-    }
-    if (!isNext && index > 0) {
-      setIndex(index - 1);
-    }
-  }
-  function automaticDisplay({
-    isPlay = true
-  }) {
-    if (isPlay) {
-      interval = setInterval(() => {
-        if (index < dummy2.length - 1) {
-          setIndex(index + 1);
-        } else {
-          setIndex(0);
-        }
-      }, 1000);
+function Gallery({
+  events = []
+}) {
+  var _currentEvent$image;
+  const [catIndex, setCatIndex] = React.useState(0);
+  function handleSlideGaller(isNext) {
+    const sliderGap = 300;
+    if (!isNext) {
+      document.getElementById('caroussel002_items_gallery').scrollLeft += sliderGap;
     } else {
-      clearInterval(interval);
+      document.getElementById('caroussel002_items_gallery').scrollLeft -= sliderGap;
     }
   }
-  return /*#__PURE__*/React.createElement("div", {
+  const currentEvent = events[catIndex];
+  return events.length ? /*#__PURE__*/React.createElement("div", {
     className: "duo"
   }, /*#__PURE__*/React.createElement("div", {
     className: "duo-left duo-yellow"
@@ -147,30 +132,82 @@ function Gallery() {
   }, "Burundi Brewery est la premi\xE8re brasserie cr\xE9\xE9e par des Burundais depuis que le Burundi existe. L\u2019entreprise Burundi Brewery produit de l\u2019eau min\xE9rale des boissons \xE0 base de banane et des jus de fruits.")), /*#__PURE__*/React.createElement("div", {
     className: "duo-right gallery-holder"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "galley"
-  }, /*#__PURE__*/React.createElement("img", {
-    key: Math.random(),
-    src: dummy2[index],
-    alt: ""
+    id: "caroussel002_items_gallery",
+    className: "caroussel002_items"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "caroussel002_items_icons caroussel002_items_icons_left",
+    onClick: e => {
+      e.stopPropagation();
+      handleSlideGaller(true);
+    }
+  }, /*#__PURE__*/React.createElement("i", {
+    className: "fa fa-arrow-left"
+  })), events.map((e, i) => {
+    return /*#__PURE__*/React.createElement("p", {
+      className: "categories_displayer_category",
+      id: catIndex === i ? 'categories_displayer_category_selected' : '',
+      key: e.id,
+      value: e.id,
+      onClick: event => {
+        event.stopPropagation();
+        setCatIndex(i);
+      }
+    }, e.title);
   }), /*#__PURE__*/React.createElement("div", {
-    className: "gallery-actions"
-  }, index > 0 ? /*#__PURE__*/React.createElement("i", {
-    className: "fa fa-arrow-left",
+    className: "caroussel002_items_icons caroussel002_items_icons_right",
+    onClick: e => {
+      e.stopPropagation();
+      handleSlideGaller(false);
+    }
+  }, /*#__PURE__*/React.createElement("i", {
+    className: "fa fa-arrow-right"
+  }))), /*#__PURE__*/React.createElement("div", {
+    className: "gallery-image-space"
+  }, /*#__PURE__*/React.createElement(ImagesDisplayer, {
+    images: currentEvent === null || currentEvent === void 0 ? void 0 : (_currentEvent$image = currentEvent.image) === null || _currentEvent$image === void 0 ? void 0 : _currentEvent$image.map(e => e.link)
+  })))) : /*#__PURE__*/React.createElement(React.Fragment, null);
+}
+function ImagesDisplayer({
+  images = []
+}) {
+  console.log(images);
+  const [currentImage, setCurrentImage] = React.useState(0);
+  function handleActions({
+    isNext = true
+  }) {
+    if (!isNext && currentImage > 0) {
+      setCurrentImage(currentImage - 1);
+    }
+    if (isNext && currentImage < images.length - 1) {
+      setCurrentImage(currentImage + 1);
+    }
+  }
+  return images.length ? /*#__PURE__*/React.createElement("div", {
+    className: "slide-show-slides",
+    key: Math.random()
+  }, /*#__PURE__*/React.createElement("a", {
+    className: "prev",
     onClick: event => {
       event.stopPropagation();
       handleActions({
         isNext: false
       });
     }
-  }) : /*#__PURE__*/React.createElement(React.Fragment, null), index < dummy2.length - 1 ? /*#__PURE__*/React.createElement("i", {
-    className: "fa fa-arrow-right",
+  }, "\u276E"), /*#__PURE__*/React.createElement("a", {
+    className: "next",
     onClick: event => {
       event.stopPropagation();
       handleActions({
         isNext: true
       });
     }
-  }) : /*#__PURE__*/React.createElement(React.Fragment, null)))));
+  }, "\u276F"), /*#__PURE__*/React.createElement("img", {
+    className: "image-slide",
+    src: images[currentImage],
+    alt: ""
+  })) : /*#__PURE__*/React.createElement("p", {
+    className: "p-centered"
+  }, "Aucune image disponible");
 }
 function ContactUsForm() {
   const [form, setForm] = React.useState({});
@@ -334,20 +371,9 @@ function EoiForm() {
     type: "submit"
   }, isAsync ? "S'il vous plaît, attendez..." : 'Envoyer'));
 }
-function Products() {
-  const products = [{
-    name: 'Soma Burundi',
-    description: "Notre bière Soma Burundi a la spécificité de ne pas contenir de sucre ajouté et le taux d’alcool est de 6%. La matière première, à savoir la banane et l’eau sont disponibles sur place sauf le malt qui est importé. Burundi Brewery utilise deux sortes de bananes à savoir la banane FIA 17 et la banane FIA 25.",
-    image: './assets/products/soma.png'
-  }, {
-    name: 'Sangwe Burundi',
-    description: "Un autre ingrédient indispensable à la production de la bière Soma Burundi est l’eau. La brasserie Burundi Brewery en a trouvé dans la commune Mwumba à 4 km de la ville de Ngozi où est basée cette entreprise. Nous avons trouvé une bonne qualité d’eau thermique à cet endroit et nous avons décidé de produire de l’eau minérale baptisée Sangwe.",
-    image: './assets/products/sangwe.png'
-  }, {
-    name: 'Jus Ok & One Burundi',
-    description: "Le projet de production du jus d’ananas n’est pas abandonné pour autant. Neuf (9) cuves pouvant contenir 800 hectolitres ont été achetés pour appuyer les quatres (4) autres cuves de Septante (70) hectolitres existant. Nous projetons d’augmenter la production, de signer des contrats avec d’autres brasseries et de produire un jus d’ananas mais aussi un jus de banane.",
-    image: './assets/products/ok.png'
-  }];
+function Products({
+  products = []
+}) {
   function handleActions({
     isNext = true
   }) {
@@ -360,20 +386,20 @@ function Products() {
   }
   const [index, setIndex] = React.useState(0);
   const currentProduct = products[index];
-  return /*#__PURE__*/React.createElement("div", {
+  return products.length ? /*#__PURE__*/React.createElement("div", {
     key: Math.random(),
     className: "products-displayer"
-  }, /*#__PURE__*/React.createElement("h1", {
-    className: "large-title colored"
-  }, "Nos produits"), /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
     className: "products-displayer-details"
+  }, /*#__PURE__*/React.createElement(ImagesDisplayer, {
+    images: currentProduct === null || currentProduct === void 0 ? void 0 : currentProduct.images.map(e => e.link)
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "row-gap-middle"
   }, /*#__PURE__*/React.createElement("h1", {
     className: "headline1"
-  }, currentProduct.name), /*#__PURE__*/React.createElement("img", {
-    src: currentProduct.image
-  }), /*#__PURE__*/React.createElement("p", {
+  }, currentProduct === null || currentProduct === void 0 ? void 0 : currentProduct.name), /*#__PURE__*/React.createElement("p", {
     className: "p-medium"
-  }, currentProduct.description)), /*#__PURE__*/React.createElement("div", {
+  }, currentProduct === null || currentProduct === void 0 ? void 0 : currentProduct.description))), /*#__PURE__*/React.createElement("div", {
     className: "products-displayer-actions"
   }, /*#__PURE__*/React.createElement("i", {
     className: "fa fa-arrow-left",
@@ -403,11 +429,11 @@ function Products() {
         isNext: true
       });
     }
-  })));
+  }))) : /*#__PURE__*/React.createElement(React.Fragment, null);
 }
 function ApplicationForm({
   job = {},
-  onClose = () => { }
+  onClose = () => {}
 }) {
   const [isAsync, setAsync] = React.useState(false);
   const [errorMessage, setError] = React.useState('');
@@ -575,6 +601,127 @@ function Jobs() {
     })));
   })) : isAsync === true ? /*#__PURE__*/React.createElement("p", null, "Veuillez patienter ...") : /*#__PURE__*/React.createElement("p", null, "Aucune offre d'emploi disponible"));
 }
+function Agencies() {
+  const [fetching, setFetching] = React.useState(false);
+  const [jobs, setJobs] = React.useState([]);
+  const [isAsync, setAsync] = React.useState(false);
+  const [wannaApply, setWannaApply] = React.useState(false);
+  const [currentJob, setCurrentJob] = React.useState({});
+  function fetchJobs() {
+    if (!fetching) {
+      setFetching(true);
+      setAsync(true);
+      fetchData('blog/findmany/agence_namespace').then(response => {
+        setFetching(false);
+        setAsync(false);
+        const {
+          data
+        } = response;
+        if (data && data !== null && data !== void 0 && data.length) {
+          setJobs(response.data);
+        }
+        console.log(response);
+      });
+    }
+  }
+  React.useEffect(() => {
+    fetchJobs();
+  }, []);
+  return /*#__PURE__*/React.createElement("div", {
+    className: "job-displayer"
+  }, wannaApply && jobs.length ? /*#__PURE__*/React.createElement(ApplicationForm, {
+    job: currentJob,
+    onClose: () => {
+      setWannaApply(false);
+      setCurrentJob({});
+    }
+  }) : /*#__PURE__*/React.createElement(React.Fragment, null), /*#__PURE__*/React.createElement("h1", {
+    className: "large-title"
+  }, "Nos agences"), jobs.length ? /*#__PURE__*/React.createElement("div", {
+    className: "jobs"
+  }, jobs.map(e => {
+    const {
+      id,
+      address,
+      fax,
+      phone,
+      name
+    } = e;
+    return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h1", null, name), /*#__PURE__*/React.createElement("p", null, address), /*#__PURE__*/React.createElement("p", null, "Tel: ", phone), /*#__PURE__*/React.createElement("p", null, "Fax: (+257) ", fax));
+  })) : isAsync === true ? /*#__PURE__*/React.createElement("p", null, "Veuillez patienter ...") : /*#__PURE__*/React.createElement("p", null, "Aucune agence disponible"));
+}
+function Staff({
+  members = []
+}) {
+  return members.length ? /*#__PURE__*/React.createElement("div", {
+    className: "job-displayer staff-members-displayer"
+  }, /*#__PURE__*/React.createElement("h1", {
+    className: "large-title"
+  }, "Notre \xE9quipe"), /*#__PURE__*/React.createElement("div", {
+    className: "staff-members"
+  }, members.map(e => {
+    const {
+      id,
+      name,
+      phone,
+      email,
+      post,
+      profile
+    } = e;
+    return /*#__PURE__*/React.createElement("div", {
+      className: "single-member"
+    }, /*#__PURE__*/React.createElement("img", {
+      src: profile,
+      alt: ""
+    }), /*#__PURE__*/React.createElement("div", {
+      className: "single-member-info"
+    }, /*#__PURE__*/React.createElement("p", {
+      className: "p-medium bold"
+    }, name), /*#__PURE__*/React.createElement("p", {
+      className: "p-medium"
+    }, post), /*#__PURE__*/React.createElement("p", {
+      className: "p-contact"
+    }, email), /*#__PURE__*/React.createElement("p", {
+      className: "p-contact"
+    }, phone)));
+  }))) : /*#__PURE__*/React.createElement(React.Fragment, null);
+}
+function Covers({
+  covers = []
+}) {
+  let slideIndex = 0;
+  function showSlides() {
+    let i;
+    let slides = document.getElementsByClassName("mySlides");
+    for (i = 0; i < slides.length; i++) {
+      slides[i].style.display = "none";
+    }
+    slideIndex++;
+    if (slideIndex > slides.length) {
+      slideIndex = 1;
+    }
+    slides[slideIndex - 1].style.display = "block";
+    setTimeout(showSlides, 5000); // Change image every 2 seconds
+  }
+
+  React.useEffect(() => {
+    if (covers.length) {
+      showSlides();
+    }
+  }, []);
+  return covers.length ? /*#__PURE__*/React.createElement("div", {
+    class: "slideshow-container",
+    style: {
+      backgroundImage: `url(${covers[0].link})`
+    }
+  }, covers.map(e => {
+    return /*#__PURE__*/React.createElement("div", {
+      class: "mySlides fade"
+    }, /*#__PURE__*/React.createElement("img", {
+      src: e.link
+    }));
+  })) : /*#__PURE__*/React.createElement(React.Fragment, null);
+}
 function ReactCompRender(id, component) {
   if (!id) return;
   const element = document.getElementById(id);
@@ -582,9 +729,29 @@ function ReactCompRender(id, component) {
     ReactDOM.createRoot(element).render(component);
   }
 }
+fetchData('blog/view').then(response => {
+  console.log('Theee', response);
+  const {
+    cover,
+    group_image,
+    member,
+    product
+  } = response;
+  ReactCompRender('products', /*#__PURE__*/React.createElement(Products, {
+    products: product
+  }));
+  ReactCompRender('staff', /*#__PURE__*/React.createElement(Staff, {
+    members: member
+  }));
+  ReactCompRender('media', /*#__PURE__*/React.createElement(Gallery, {
+    events: group_image
+  }));
+  ReactCompRender('slide-from', /*#__PURE__*/React.createElement(Covers, {
+    covers: cover
+  }));
+});
 ReactCompRender('newsLetterForm', /*#__PURE__*/React.createElement(SubscribeToNewsLetter, null));
-ReactCompRender('media', /*#__PURE__*/React.createElement(Gallery, null));
 ReactCompRender('contact-us-form', /*#__PURE__*/React.createElement(ContactUsForm, null));
 ReactCompRender('eoi-form', /*#__PURE__*/React.createElement(EoiForm, null));
-ReactCompRender('products', /*#__PURE__*/React.createElement(Products, null));
 ReactCompRender('jobs', /*#__PURE__*/React.createElement(Jobs, null));
+ReactCompRender('agencies', /*#__PURE__*/React.createElement(Agencies, null));

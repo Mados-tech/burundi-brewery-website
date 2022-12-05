@@ -68,15 +68,19 @@ export const Footer = (locale, homePath) => {
     <div class="footer-header">
         <div class="foo-block">
             <a href="${homePath}#about">Historique</a>
-            <a href="${homePath}#profile">Missions stratégiques </a>
             <a href="${homePath}#vision">Vision</a>
+            <a href="${homePath}#social-responsibility">Engagement social</a>
+            <a href="${homePath}#profile">Missions stratégiques </a>
             <a href="${homePath}#products">Nos produits</a>
-            <a href="${homePath}#media">Galerie</a>
+            <a href="${homePath}agencies">Nos agences</a>
+            <a href='${homePath}#staff'>Notre équipe</a>
         </div>
         <div class="foo-block">
             <a href='${homePath}eoi'>Manifestation d'intérêt</a>
             <a href='${homePath}jobs'>Offre d'emploi</a>
             <a href='${systemBlogBaseUrl}'>Actualités</a>
+            <a href="${homePath}#contact-us">Contactez-nous</a>
+            <a href="${homePath}#media">Galerie</a>
         </div>
         <div class="foo-block">
             <p>Social</p>
