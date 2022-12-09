@@ -1,4 +1,4 @@
-const systemBlogBaseUrl = 'https://blog.burundi-brewery.madosgroup.com';
+const systemBlogBaseUrl = 'https://blog.burundibrewery.com';
 // const systemBlogBaseUrl = 'http://192.168.1.100:3000';
 
 export const NavBar = (locale, homePath) => {

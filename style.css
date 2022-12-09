@@ -734,12 +734,14 @@ button {
 
 .single-contact {
     padding: .5rem 0rem;
-    cursor: pointer;
     width: fit-content;
     border-radius: .4rem;
 }
 
 .single-contact i {
+    width: 1.3rem;
+    max-width: 1.3rem;
+    min-width: 1.3rem;
     font-size: larger;
     color: var(--greenLight);
 }
