@@ -689,6 +689,11 @@ function Staff({
 function Covers({
   covers = []
 }) {
+  const coversOfficial = covers !== null && covers !== void 0 && covers.length ? covers : ["https://brewerystorage.s3.af-south-1.amazonaws.com/bdi_burundi_brewery_02_2020_akezanet.jpeg", "https://brewerystorage.s3.af-south-1.amazonaws.com/DSC_0461.jpg", "https://brewerystorage.s3.af-south-1.amazonaws.com/Ngozieco1.jpg.png", "https://brewerystorage.s3.af-south-1.amazonaws.com/Bbrew2.JPG", "https://brewerystorage.s3.af-south-1.amazonaws.com/Cuves+Brew2.JPG"].map(e => {
+    return {
+      link: e
+    };
+  });
   let slideIndex = 0;
   function showSlides() {
     let i;
@@ -705,16 +710,16 @@ function Covers({
   }
 
   React.useEffect(() => {
-    if (covers.length) {
+    if (coversOfficial.length) {
       showSlides();
     }
   }, []);
-  return covers.length ? /*#__PURE__*/React.createElement("div", {
+  return coversOfficial.length ? /*#__PURE__*/React.createElement("div", {
     class: "slideshow-container",
     style: {
-      backgroundImage: `url(${covers[0].link})`
+      backgroundImage: `url(${coversOfficial[0].link})`
     }
-  }, covers.map(e => {
+  }, coversOfficial.map(e => {
     return /*#__PURE__*/React.createElement("div", {
       class: "mySlides fade"
     }, /*#__PURE__*/React.createElement("img", {

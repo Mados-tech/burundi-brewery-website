@@ -4,7 +4,7 @@ const systemBlogBaseUrl = 'https://blog.burundibrewery.com';
 export const NavBar = (locale, homePath) => {
     return `
         <a href='${homePath}' class="logo-named">
-            <img alt="" src="https://dpictures.s3.amazonaws.com/pv-d/20221119_072215.png"/>
+            <img alt="" src="https://brewerystorage.s3.af-south-1.amazonaws.com/bbrew_logo.png"/>
             <h1 class="headline1 logoName">BURUNDI BREWERY</h1>
         </a>
         <div class="navbar-actions flex column-gap-middle">
