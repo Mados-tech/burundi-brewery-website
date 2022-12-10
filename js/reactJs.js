@@ -560,8 +560,6 @@ function Staff({ members = [] }) {
                     <div className="single-member-info">
                         <p className="p-medium bold">{name}</p>
                         <p className="p-medium">{post}</p>
-                        <p className="p-contact">{email}</p>
-                        <p className="p-contact">{phone}</p>
                     </div>
                 </div>
             })}

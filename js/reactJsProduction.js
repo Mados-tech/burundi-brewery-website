@@ -679,11 +679,7 @@ function Staff({
       className: "p-medium bold"
     }, name), /*#__PURE__*/React.createElement("p", {
       className: "p-medium"
-    }, post), /*#__PURE__*/React.createElement("p", {
-      className: "p-contact"
-    }, email), /*#__PURE__*/React.createElement("p", {
-      className: "p-contact"
-    }, phone)));
+    }, post)));
   }))) : /*#__PURE__*/React.createElement(React.Fragment, null);
 }
 function Covers({
