@@ -1,7 +1,7 @@
 "use strict";
 
 // const systemBaseUrl = 'http://192.168.1.101:8000/brewery/api';
-const systemBaseUrl = 'https://burundi-brewery.madosgroup.com/brewery/api';
+const systemBaseUrl = 'https://brewery.madosgroup.com/brewery/api';
 async function postData(url = '', data = {}) {
   return await fetch(`${systemBaseUrl}/${url}`, {
     method: 'POST',
