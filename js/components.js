@@ -91,7 +91,7 @@ export const Footer = (locale, homePath) => {
                         class="fa-brands fa-twitter"></i></a>
                 <a target="_blank" href="https://instagram.com/burundibrewery"><i
                         class="fa-brands fa-instagram"></i></a>
-                <a target="_blank" href="https://youtube.com/burundibrewery"><i
+                <a target="_blank" href="https://youtube.com/@burundibrewery"><i
                         class="fa-brands fa-youtube"></i></a>
             </div>
         </div>
