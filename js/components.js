@@ -85,7 +85,7 @@ export const Footer = (locale, homePath) => {
         <div class="foo-block">
             <p>Social</p>
             <div class="social-media">
-                <a target="_blank" href="https://facebook.com/burundibrewery"><i
+                <a target="_blank" href="https://facebook.com/profile.php?id=100084507192077"><i
                         class="fa-brands fa-facebook"></i></a>
                 <a target="_blank" href="https://twitter.com/burundibrewery"><i
                         class="fa-brands fa-twitter"></i></a>
