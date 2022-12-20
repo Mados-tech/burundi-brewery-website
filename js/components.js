@@ -5,7 +5,7 @@ export const NavBar = (locale, homePath) => {
     return `
         <a href='${homePath}' class="logo-named">
             <img alt="" src="https://brewerystorage.s3.af-south-1.amazonaws.com/bbrew_logo.png"/>
-            <h1 class="headline1 logoName">BURUNDI BREWERY SA</h1>
+            <h1 class="headline1 logoName">BURUNDI BREWERY S.A</h1>
         </a>
         <div class="navbar-actions flex column-gap-middle">
             <a href='${homePath}#about' onclick="handleCloseSideMenu()">${{
