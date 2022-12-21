@@ -1,4 +1,4 @@
-// const systemBaseUrl = 'http://192.168.1.101:8000/brewery/api';
+// const systemBaseUrl = 'http://192.168.43.114:8000/brewery/api';
 const systemBaseUrl = 'https://brewery.madosgroup.com/brewery/api';
 
 async function postData(url = '', data = {}) {
@@ -147,7 +147,7 @@ function Gallery({ events = [] }) {
                 </div>
             </div>
             <div className="gallery-image-space">
-                <ImagesDisplayer images={currentEvent?.image?.map((e) => e.link)} />
+                <GalleryImagesDisplayer images={currentEvent?.image} />
             </div>
         </div>
     </div> : <></>
@@ -169,7 +169,7 @@ function ImagesDisplayer({ images = [] }) {
         }
     }
 
-    return images.length ? <div className='slide-show-slides' key={Math.random()}>
+    return images.length ? < div className='slide-show-slides' key={Math.random()} >
         <a className="prev" onClick={(event) => {
             event.stopPropagation();
             handleActions({ isNext: false });
@@ -179,7 +179,48 @@ function ImagesDisplayer({ images = [] }) {
             handleActions({ isNext: true });
         }}>&#10095;</a>
         <img className="image-slide" src={images[currentImage]} alt="" />
-    </div> : <p className="p-centered">Aucune image disponible</p>
+    </div > : <p className="p-centered">Aucune image disponible</p>
+}
+
+function GalleryImagesDisplayer({ images = [] }) {
+    console.log(images);
+
+    const [currentImage, setCurrentImage] = React.useState(0);
+
+    function handleActions({ isNext = true }) {
+        if (!isNext && currentImage > 0) {
+            setCurrentImage(currentImage - 1)
+        }
+
+        if (isNext && currentImage < (images.length - 1)) {
+            setCurrentImage(currentImage + 1)
+        }
+    }
+
+    return images.length ? < div className='slide-show-slides' key={Math.random()} >
+        <a className="prev" onClick={(event) => {
+            event.stopPropagation();
+            handleActions({ isNext: false });
+        }}>&#10094;</a>
+        <a className="next" onClick={(event) => {
+            event.stopPropagation();
+            handleActions({ isNext: true });
+        }}>&#10095;</a>
+        <img className="image-slide" src={images[currentImage].link} alt="" />
+        <div className="single-image-description">
+            <p>{images[currentImage].description}</p>
+            <div className="social-media">
+                <a target="_blank" href={images[currentImage].facebook}><i
+                    className="fa-brands fa-facebook"></i></a>
+                <a target="_blank" href={images[currentImage].twitter}><i
+                    className="fa-brands fa-twitter"></i></a>
+                <a target="_blank" href={images[currentImage].instagram}><i
+                    className="fa-brands fa-instagram"></i></a>
+                <a target="_blank" href={images[currentImage].youtube}><i
+                    className="fa-brands fa-youtube"></i></a>
+            </div>
+        </div>
+    </div > : <p className="p-centered">Aucune image disponible</p>
 }
 
 
@@ -245,7 +286,7 @@ function ContactUsForm() {
     </form>
 }
 
-function EoiForm() {
+function EoiForm({ id = '', onClose = () => { } }) {
 
     const [isAsync, setAsync] = React.useState(false);
     const [errorMessage, setError] = React.useState('');
@@ -259,6 +300,7 @@ function EoiForm() {
         setError('');
         console.log(formData.entries);
         setAsync(true);
+        formData.set('EOI', id);
         postDataWithFiles({ url: 'job/eointerest', data: formData }).then((response) => {
             setAsync(false);
             if (response.saved) {
@@ -273,7 +315,14 @@ function EoiForm() {
 
     }
 
-    return <form ref={formRef} className="contact-form" onSubmit={handleSubmit}>
+    return <form ref={formRef} className="contact-form eoi-form" onSubmit={handleSubmit}>
+        <div className="flex-row application-form-header">
+            <h1></h1>
+            <i className='fa fa-xmark action-icon' onClick={(event) => {
+                event.stopPropagation();
+                onClose();
+            }} />
+        </div>
         <div className="input-labeled">
             <label>Nom de l'entreprise</label>
             <input type="name" placeholder="Entreprise" name="Name" required onChange={(e) => {
@@ -319,8 +368,25 @@ function Products({ products = [] }) {
         }
     }
 
-    const [index, setIndex] = React.useState(0);
+    console.log(typeof window.location.hash);
+
+
+    const hash = window.location.hash;
+    const [index, setIndex] = React.useState(Number(hash.replaceAll("#", "")));
     const currentProduct = products[index];
+
+    React.useEffect(() => {
+        window.addEventListener("hashchange", function set() {
+            const hashF = window.location.hash;
+            setIndex(Number(hashF.replaceAll("#", "")))
+        }, false);
+
+        return () => {
+            window.removeEventListener('hashchange', () => { }, false);
+        }
+    }, [])
+
+
 
     return products.length ? <div key={Math.random()} className="products-displayer">
         {/* <h1 className="large-title">Nos produits</h1> */}
@@ -355,6 +421,42 @@ function Products({ products = [] }) {
             }} />
         </div>
     </div> : <></>
+}
+
+function ProductsList({ products = [] }) {
+
+    function handleCloseSideMenu() {
+        document.querySelector('.side-menu').style.transform = "scaleX(0)";
+    }
+
+    const homePath = localStorage.getItem('home') ?? '/';
+
+    return <div className="contextual-arrow">
+        <a>
+            Nos produits
+            <i className="fa fa-caret-down"></i>
+        </a>
+        <div className="contextual-menu">
+            {products.map((e, i) => {
+                return <a key={e.name} href={`${homePath}products/#${i}`} onClick={handleCloseSideMenu}>{e.name}</a>
+            })}
+        </div>
+    </div>
+}
+
+function ProductsListFooter({ products = [] }) {
+
+    function handleCloseSideMenu() {
+        document.querySelector('.side-menu').style.transform = "scaleX(0)";
+    }
+
+    const homePath = localStorage.getItem('home') ?? '/';
+
+    return <div className="foo-block">
+        {products.map((e, i) => {
+            return <a key={e.name} href={`${homePath}products/#${i}`}>{e.name}</a>
+        })}
+    </div>
 }
 
 
@@ -431,6 +533,66 @@ function ApplicationForm({ job = {}, onClose = () => { } }) {
     </div>
 }
 
+function ApplicationEoiForm({ job = {}, onClose = () => { } }) {
+    const [isAsync, setAsync] = React.useState(false);
+    const [errorMessage, setError] = React.useState('');
+    const [successMessage, setSuccess] = React.useState('');
+    const [formData, setForm] = React.useState(new FormData());
+    const formRef = React.useRef();
+
+    const handleSubmit = (event) => {
+
+        event.preventDefault();
+        formData.set('Job_id', job.id);
+        setSuccess('');
+        setError('');
+        console.log(formData.entries);
+        setAsync(true);
+        postDataWithFiles({ url: 'job/write/application_namespace', data: formData }).then((response) => {
+            setAsync(false);
+            if (response.id) {
+                setSuccess('Votre candidature a été envoyé avec succès');
+                formRef.current.reset();
+                setForm(new FormData());
+            } else {
+                console.log('Failure', response);
+                setError("Une erreur s'est produite, vérifiez votre connexion Internet, puis réessayez.")
+            }
+        })
+
+    }
+    return <div className="modal-curtain">
+        <section className="duo eoi-form-parent">
+            <div className="duo-left contact-info">
+                <div className="contact-info-box">
+                    <h1 className="large-title">Postuler</h1>
+                    <p>L'appel à manifestation d'intérêt est un mode de présélection des candidats qui seront invités à
+                        soumissionner lors de futures procédures de passation de marchés publics (appels d'offres restreints
+                        ou procédure concurrentielle avec négociation).
+                        <br></br>
+                        Remplissez le formulaire et notre équipe vous
+                        répondra dans les 24 heures.</p>
+                    <p>Tous les champs sont obligatoires. L'e-mail sera utilisé pour vous contacter, Le document que vous
+                        téléchargez doit contenir :</p>
+                </div>
+                <div className="contact-info-box">
+                    <div className="single-contact flex-row column-gap-middle">
+                        <p>1. Informations sur le fournisseur (Raison sociale, adresse physique, téléphone,
+                            e-mail, NIF, RC, capacité financière, statut juridique , structure organisationnelle)</p>
+                    </div>
+                    <div className="single-contact flex-row column-gap-middle">
+                        <p>2. Expérience (CV, certificat de service, autres pièces jointes)</p>
+                    </div>
+                    <div className="single-contact flex-row column-gap-middle">
+                        <p>3. Offre technique (Décrivez ce que vous proposez)</p>
+                    </div>
+                </div>
+            </div>
+            <EoiForm id={job.id} onClose={onClose} />
+        </section >
+    </div >
+}
+
 
 function Jobs() {
 
@@ -491,6 +653,70 @@ function Jobs() {
             : isAsync === true
                 ? <p>Veuillez patienter ...</p>
                 : <p>Aucune offre d'emploi disponible</p>
+        }
+    </div>
+}
+
+function Eois() {
+
+    const [fetching, setFetching] = React.useState(false);
+    const [jobs, setJobs] = React.useState([]);
+    const [isAsync, setAsync] = React.useState(false);
+    const [wannaApply, setWannaApply] = React.useState(false);
+    const [currentJob, setCurrentJob] = React.useState({});
+
+    function fetchJobs() {
+        if (!fetching) {
+            setFetching(true);
+            setAsync(true);
+            fetchData('job/findmany/eoi_offer').then((response) => {
+                setFetching(false);
+                setAsync(false);
+                const { data } = response;
+                if (data && data?.length) {
+                    setJobs(response.data);
+                }
+                console.log(response);
+            })
+        }
+    }
+
+
+    React.useEffect(() => {
+        fetchJobs();
+    }, []);
+
+
+
+    return <div className="job-displayer">
+        {wannaApply && jobs.length ? <ApplicationEoiForm job={currentJob} onClose={() => {
+            setWannaApply(false);
+            setCurrentJob({});
+        }} /> : <></>}
+        <h1 className="large-title">Marchés publics</h1>
+        {jobs.length
+            ? <div className='jobs'>
+                {jobs.map((e) => {
+                    console.log(e);
+                    const { id, description, limit_day_to_submit, document, title } = e;
+                    return <div className="single-job" key={id}>
+                        <div className='job-header flex-row column-gap-middle'>
+                            <p className="p-medium bold">{title}</p>
+                            <button onClick={(event) => {
+                                event.stopPropagation();
+                                setCurrentJob(e);
+                                setWannaApply(true);
+                            }}>Postuler</button>
+                        </div>
+                        <div dangerouslySetInnerHTML={{ __html: description }}></div>
+                        <p>Obtenez la description complète de cette offre <a href={document} target='_blank' className="bold">ici</a>.</p>
+                        {/* <p>Date limite {new Date(limit_day_to_submit).toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' })}</p> */}
+                    </div>
+                })}
+            </div>
+            : isAsync === true
+                ? <p>Veuillez patienter ...</p>
+                : <p>Aucun marché public disponible</p>
         }
     </div>
 }
@@ -600,29 +826,44 @@ function Covers({ covers = [] }) {
         }
     }, []);
 
-    return coversOfficial.length ? <div class="slideshow-container" style={{
+    return coversOfficial.length ? <div className="slideshow-container" style={{
         backgroundImage: `url(${coversOfficial[0].link})`,
     }}>
         {coversOfficial.map((e) => {
-            return <div class="mySlides fade">
+            return <div className="mySlides fade">
                 <img src={e.link} />
             </div>
         })}
     </div> : <></>
 }
 
-function ReactCompRender(id, component) {
-    if (!id) return;
-    const element = document.getElementById(id);
-    if (element) {
-        ReactDOM.createRoot(element).render(component);
+function doThisForAll(key, whatToDo) {
+    if (document.querySelector(key)) {
+        document.querySelectorAll(key).forEach((element) => {
+            whatToDo(element);
+        });
     }
+}
+
+function ReactCompRender(id, component) {
+
+    if (!id) return;
+    doThisForAll(`#${id}`, (element) => {
+        ReactDOM.createRoot(element).render(component);
+    })
+    // const element = document.getElementById(id);
+    // if (element) {
+    //     console.log(id, 'exist in this page');
+    //     ReactDOM.createRoot(element).render(component);
+    // }
 }
 
 fetchData('blog/view').then((response) => {
     console.log('Theee', response);
     const { cover, group_image, member, product } = response;
     ReactCompRender('products', <Products products={product} />);
+    ReactCompRender('products-alizer', <ProductsList products={product} />);
+    ReactCompRender('products-footer', <ProductsListFooter products={product} />);
     ReactCompRender('staff', <Staff members={member} />);
     ReactCompRender('media', <Gallery events={group_image} />);
     ReactCompRender('slide-from', <Covers covers={cover} />);
@@ -630,8 +871,8 @@ fetchData('blog/view').then((response) => {
 
 ReactCompRender('newsLetterForm', <SubscribeToNewsLetter />);
 ReactCompRender('contact-us-form', <ContactUsForm />);
-ReactCompRender('eoi-form', <EoiForm />);
 ReactCompRender('jobs', <Jobs />);
+ReactCompRender('eoi', <Eois />);
 ReactCompRender('agencies', <Agencies />);
 
 

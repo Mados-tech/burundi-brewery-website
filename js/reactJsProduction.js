@@ -1,6 +1,6 @@
 "use strict";
 
-// const systemBaseUrl = 'http://192.168.1.101:8000/brewery/api';
+// const systemBaseUrl = 'http://192.168.43.114:8000/brewery/api';
 const systemBaseUrl = 'https://brewery.madosgroup.com/brewery/api';
 async function postData(url = '', data = {}) {
   return await fetch(`${systemBaseUrl}/${url}`, {
@@ -108,7 +108,6 @@ function SubscribeToNewsLetter() {
 function Gallery({
   events = []
 }) {
-  var _currentEvent$image;
   const [catIndex, setCatIndex] = React.useState(0);
   function handleSlideGaller(isNext) {
     const sliderGap = 300;
@@ -163,8 +162,8 @@ function Gallery({
     className: "fa fa-arrow-right"
   }))), /*#__PURE__*/React.createElement("div", {
     className: "gallery-image-space"
-  }, /*#__PURE__*/React.createElement(ImagesDisplayer, {
-    images: currentEvent === null || currentEvent === void 0 ? void 0 : (_currentEvent$image = currentEvent.image) === null || _currentEvent$image === void 0 ? void 0 : _currentEvent$image.map(e => e.link)
+  }, /*#__PURE__*/React.createElement(GalleryImagesDisplayer, {
+    images: currentEvent === null || currentEvent === void 0 ? void 0 : currentEvent.image
   })))) : /*#__PURE__*/React.createElement(React.Fragment, null);
 }
 function ImagesDisplayer({
@@ -206,6 +205,72 @@ function ImagesDisplayer({
     src: images[currentImage],
     alt: ""
   })) : /*#__PURE__*/React.createElement("p", {
+    className: "p-centered"
+  }, "Aucune image disponible");
+}
+function GalleryImagesDisplayer({
+  images = []
+}) {
+  console.log(images);
+  const [currentImage, setCurrentImage] = React.useState(0);
+  function handleActions({
+    isNext = true
+  }) {
+    if (!isNext && currentImage > 0) {
+      setCurrentImage(currentImage - 1);
+    }
+    if (isNext && currentImage < images.length - 1) {
+      setCurrentImage(currentImage + 1);
+    }
+  }
+  return images.length ? /*#__PURE__*/React.createElement("div", {
+    className: "slide-show-slides",
+    key: Math.random()
+  }, /*#__PURE__*/React.createElement("a", {
+    className: "prev",
+    onClick: event => {
+      event.stopPropagation();
+      handleActions({
+        isNext: false
+      });
+    }
+  }, "\u276E"), /*#__PURE__*/React.createElement("a", {
+    className: "next",
+    onClick: event => {
+      event.stopPropagation();
+      handleActions({
+        isNext: true
+      });
+    }
+  }, "\u276F"), /*#__PURE__*/React.createElement("img", {
+    className: "image-slide",
+    src: images[currentImage].link,
+    alt: ""
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "single-image-description"
+  }, /*#__PURE__*/React.createElement("p", null, images[currentImage].description), /*#__PURE__*/React.createElement("div", {
+    className: "social-media"
+  }, /*#__PURE__*/React.createElement("a", {
+    target: "_blank",
+    href: images[currentImage].facebook
+  }, /*#__PURE__*/React.createElement("i", {
+    className: "fa-brands fa-facebook"
+  })), /*#__PURE__*/React.createElement("a", {
+    target: "_blank",
+    href: images[currentImage].twitter
+  }, /*#__PURE__*/React.createElement("i", {
+    className: "fa-brands fa-twitter"
+  })), /*#__PURE__*/React.createElement("a", {
+    target: "_blank",
+    href: images[currentImage].instagram
+  }, /*#__PURE__*/React.createElement("i", {
+    className: "fa-brands fa-instagram"
+  })), /*#__PURE__*/React.createElement("a", {
+    target: "_blank",
+    href: images[currentImage].youtube
+  }, /*#__PURE__*/React.createElement("i", {
+    className: "fa-brands fa-youtube"
+  }))))) : /*#__PURE__*/React.createElement("p", {
     className: "p-centered"
   }, "Aucune image disponible");
 }
@@ -289,7 +354,10 @@ function ContactUsForm() {
     type: "submit"
   }, isAsync ? "S'il vous plaît, attendez..." : 'Envoyer le message'));
 }
-function EoiForm() {
+function EoiForm({
+  id = '',
+  onClose = () => {}
+}) {
   const [isAsync, setAsync] = React.useState(false);
   const [errorMessage, setError] = React.useState('');
   const [successMessage, setSuccess] = React.useState('');
@@ -301,6 +369,7 @@ function EoiForm() {
     setError('');
     console.log(formData.entries);
     setAsync(true);
+    formData.set('EOI', id);
     postDataWithFiles({
       url: 'job/eointerest',
       data: formData
@@ -318,9 +387,17 @@ function EoiForm() {
   };
   return /*#__PURE__*/React.createElement("form", {
     ref: formRef,
-    className: "contact-form",
+    className: "contact-form eoi-form",
     onSubmit: handleSubmit
   }, /*#__PURE__*/React.createElement("div", {
+    className: "flex-row application-form-header"
+  }, /*#__PURE__*/React.createElement("h1", null), /*#__PURE__*/React.createElement("i", {
+    className: "fa fa-xmark action-icon",
+    onClick: event => {
+      event.stopPropagation();
+      onClose();
+    }
+  })), /*#__PURE__*/React.createElement("div", {
     className: "input-labeled"
   }, /*#__PURE__*/React.createElement("label", null, "Nom de l'entreprise"), /*#__PURE__*/React.createElement("input", {
     type: "name",
@@ -384,8 +461,19 @@ function Products({
       setIndex(index - 1);
     }
   }
-  const [index, setIndex] = React.useState(0);
+  console.log(typeof window.location.hash);
+  const hash = window.location.hash;
+  const [index, setIndex] = React.useState(Number(hash.replaceAll("#", "")));
   const currentProduct = products[index];
+  React.useEffect(() => {
+    window.addEventListener("hashchange", function set() {
+      const hashF = window.location.hash;
+      setIndex(Number(hashF.replaceAll("#", "")));
+    }, false);
+    return () => {
+      window.removeEventListener('hashchange', () => {}, false);
+    };
+  }, []);
   return products.length ? /*#__PURE__*/React.createElement("div", {
     key: Math.random(),
     className: "products-displayer"
@@ -430,6 +518,45 @@ function Products({
       });
     }
   }))) : /*#__PURE__*/React.createElement(React.Fragment, null);
+}
+function ProductsList({
+  products = []
+}) {
+  var _localStorage$getItem;
+  function handleCloseSideMenu() {
+    document.querySelector('.side-menu').style.transform = "scaleX(0)";
+  }
+  const homePath = (_localStorage$getItem = localStorage.getItem('home')) !== null && _localStorage$getItem !== void 0 ? _localStorage$getItem : '/';
+  return /*#__PURE__*/React.createElement("div", {
+    className: "contextual-arrow"
+  }, /*#__PURE__*/React.createElement("a", null, "Nos produits", /*#__PURE__*/React.createElement("i", {
+    className: "fa fa-caret-down"
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "contextual-menu"
+  }, products.map((e, i) => {
+    return /*#__PURE__*/React.createElement("a", {
+      key: e.name,
+      href: `${homePath}products/#${i}`,
+      onClick: handleCloseSideMenu
+    }, e.name);
+  })));
+}
+function ProductsListFooter({
+  products = []
+}) {
+  var _localStorage$getItem2;
+  function handleCloseSideMenu() {
+    document.querySelector('.side-menu').style.transform = "scaleX(0)";
+  }
+  const homePath = (_localStorage$getItem2 = localStorage.getItem('home')) !== null && _localStorage$getItem2 !== void 0 ? _localStorage$getItem2 : '/';
+  return /*#__PURE__*/React.createElement("div", {
+    className: "foo-block"
+  }, products.map((e, i) => {
+    return /*#__PURE__*/React.createElement("a", {
+      key: e.name,
+      href: `${homePath}products/#${i}`
+    }, e.name);
+  }));
 }
 function ApplicationForm({
   job = {},
@@ -527,6 +654,60 @@ function ApplicationForm({
     type: "submit"
   }, isAsync ? "S'il vous plaît, attendez..." : 'Envoyer')));
 }
+function ApplicationEoiForm({
+  job = {},
+  onClose = () => {}
+}) {
+  const [isAsync, setAsync] = React.useState(false);
+  const [errorMessage, setError] = React.useState('');
+  const [successMessage, setSuccess] = React.useState('');
+  const [formData, setForm] = React.useState(new FormData());
+  const formRef = React.useRef();
+  const handleSubmit = event => {
+    event.preventDefault();
+    formData.set('Job_id', job.id);
+    setSuccess('');
+    setError('');
+    console.log(formData.entries);
+    setAsync(true);
+    postDataWithFiles({
+      url: 'job/write/application_namespace',
+      data: formData
+    }).then(response => {
+      setAsync(false);
+      if (response.id) {
+        setSuccess('Votre candidature a été envoyé avec succès');
+        formRef.current.reset();
+        setForm(new FormData());
+      } else {
+        console.log('Failure', response);
+        setError("Une erreur s'est produite, vérifiez votre connexion Internet, puis réessayez.");
+      }
+    });
+  };
+  return /*#__PURE__*/React.createElement("div", {
+    className: "modal-curtain"
+  }, /*#__PURE__*/React.createElement("section", {
+    className: "duo eoi-form-parent"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "duo-left contact-info"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "contact-info-box"
+  }, /*#__PURE__*/React.createElement("h1", {
+    className: "large-title"
+  }, "Postuler"), /*#__PURE__*/React.createElement("p", null, "L'appel \xE0 manifestation d'int\xE9r\xEAt est un mode de pr\xE9s\xE9lection des candidats qui seront invit\xE9s \xE0 soumissionner lors de futures proc\xE9dures de passation de march\xE9s publics (appels d'offres restreints ou proc\xE9dure concurrentielle avec n\xE9gociation).", /*#__PURE__*/React.createElement("br", null), "Remplissez le formulaire et notre \xE9quipe vous r\xE9pondra dans les 24 heures."), /*#__PURE__*/React.createElement("p", null, "Tous les champs sont obligatoires. L'e-mail sera utilis\xE9 pour vous contacter, Le document que vous t\xE9l\xE9chargez doit contenir :")), /*#__PURE__*/React.createElement("div", {
+    className: "contact-info-box"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "single-contact flex-row column-gap-middle"
+  }, /*#__PURE__*/React.createElement("p", null, "1. Informations sur le fournisseur (Raison sociale, adresse physique, t\xE9l\xE9phone, e-mail, NIF, RC, capacit\xE9 financi\xE8re, statut juridique , structure organisationnelle)")), /*#__PURE__*/React.createElement("div", {
+    className: "single-contact flex-row column-gap-middle"
+  }, /*#__PURE__*/React.createElement("p", null, "2. Exp\xE9rience (CV, certificat de service, autres pi\xE8ces jointes)")), /*#__PURE__*/React.createElement("div", {
+    className: "single-contact flex-row column-gap-middle"
+  }, /*#__PURE__*/React.createElement("p", null, "3. Offre technique (D\xE9crivez ce que vous proposez)")))), /*#__PURE__*/React.createElement(EoiForm, {
+    id: job.id,
+    onClose: onClose
+  })));
+}
 function Jobs() {
   const [fetching, setFetching] = React.useState(false);
   const [jobs, setJobs] = React.useState([]);
@@ -600,6 +781,77 @@ function Jobs() {
       day: 'numeric'
     })));
   })) : isAsync === true ? /*#__PURE__*/React.createElement("p", null, "Veuillez patienter ...") : /*#__PURE__*/React.createElement("p", null, "Aucune offre d'emploi disponible"));
+}
+function Eois() {
+  const [fetching, setFetching] = React.useState(false);
+  const [jobs, setJobs] = React.useState([]);
+  const [isAsync, setAsync] = React.useState(false);
+  const [wannaApply, setWannaApply] = React.useState(false);
+  const [currentJob, setCurrentJob] = React.useState({});
+  function fetchJobs() {
+    if (!fetching) {
+      setFetching(true);
+      setAsync(true);
+      fetchData('job/findmany/eoi_offer').then(response => {
+        setFetching(false);
+        setAsync(false);
+        const {
+          data
+        } = response;
+        if (data && data !== null && data !== void 0 && data.length) {
+          setJobs(response.data);
+        }
+        console.log(response);
+      });
+    }
+  }
+  React.useEffect(() => {
+    fetchJobs();
+  }, []);
+  return /*#__PURE__*/React.createElement("div", {
+    className: "job-displayer"
+  }, wannaApply && jobs.length ? /*#__PURE__*/React.createElement(ApplicationEoiForm, {
+    job: currentJob,
+    onClose: () => {
+      setWannaApply(false);
+      setCurrentJob({});
+    }
+  }) : /*#__PURE__*/React.createElement(React.Fragment, null), /*#__PURE__*/React.createElement("h1", {
+    className: "large-title"
+  }, "March\xE9s publics"), jobs.length ? /*#__PURE__*/React.createElement("div", {
+    className: "jobs"
+  }, jobs.map(e => {
+    console.log(e);
+    const {
+      id,
+      description,
+      limit_day_to_submit,
+      document,
+      title
+    } = e;
+    return /*#__PURE__*/React.createElement("div", {
+      className: "single-job",
+      key: id
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "job-header flex-row column-gap-middle"
+    }, /*#__PURE__*/React.createElement("p", {
+      className: "p-medium bold"
+    }, title), /*#__PURE__*/React.createElement("button", {
+      onClick: event => {
+        event.stopPropagation();
+        setCurrentJob(e);
+        setWannaApply(true);
+      }
+    }, "Postuler")), /*#__PURE__*/React.createElement("div", {
+      dangerouslySetInnerHTML: {
+        __html: description
+      }
+    }), /*#__PURE__*/React.createElement("p", null, "Obtenez la description compl\xE8te de cette offre ", /*#__PURE__*/React.createElement("a", {
+      href: document,
+      target: "_blank",
+      className: "bold"
+    }, "ici"), "."));
+  })) : isAsync === true ? /*#__PURE__*/React.createElement("p", null, "Veuillez patienter ...") : /*#__PURE__*/React.createElement("p", null, "Aucun march\xE9 public disponible"));
 }
 function Agencies() {
   const [fetching, setFetching] = React.useState(false);
@@ -711,25 +963,37 @@ function Covers({
     }
   }, []);
   return coversOfficial.length ? /*#__PURE__*/React.createElement("div", {
-    class: "slideshow-container",
+    className: "slideshow-container",
     style: {
       backgroundImage: `url(${coversOfficial[0].link})`
     }
   }, coversOfficial.map(e => {
     return /*#__PURE__*/React.createElement("div", {
-      class: "mySlides fade"
+      className: "mySlides fade"
     }, /*#__PURE__*/React.createElement("img", {
       src: e.link
     }));
   })) : /*#__PURE__*/React.createElement(React.Fragment, null);
 }
-function ReactCompRender(id, component) {
-  if (!id) return;
-  const element = document.getElementById(id);
-  if (element) {
-    ReactDOM.createRoot(element).render(component);
+function doThisForAll(key, whatToDo) {
+  if (document.querySelector(key)) {
+    document.querySelectorAll(key).forEach(element => {
+      whatToDo(element);
+    });
   }
 }
+function ReactCompRender(id, component) {
+  if (!id) return;
+  doThisForAll(`#${id}`, element => {
+    ReactDOM.createRoot(element).render(component);
+  });
+  // const element = document.getElementById(id);
+  // if (element) {
+  //     console.log(id, 'exist in this page');
+  //     ReactDOM.createRoot(element).render(component);
+  // }
+}
+
 fetchData('blog/view').then(response => {
   console.log('Theee', response);
   const {
@@ -739,6 +1003,12 @@ fetchData('blog/view').then(response => {
     product
   } = response;
   ReactCompRender('products', /*#__PURE__*/React.createElement(Products, {
+    products: product
+  }));
+  ReactCompRender('products-alizer', /*#__PURE__*/React.createElement(ProductsList, {
+    products: product
+  }));
+  ReactCompRender('products-footer', /*#__PURE__*/React.createElement(ProductsListFooter, {
     products: product
   }));
   ReactCompRender('staff', /*#__PURE__*/React.createElement(Staff, {
@@ -753,6 +1023,6 @@ fetchData('blog/view').then(response => {
 });
 ReactCompRender('newsLetterForm', /*#__PURE__*/React.createElement(SubscribeToNewsLetter, null));
 ReactCompRender('contact-us-form', /*#__PURE__*/React.createElement(ContactUsForm, null));
-ReactCompRender('eoi-form', /*#__PURE__*/React.createElement(EoiForm, null));
 ReactCompRender('jobs', /*#__PURE__*/React.createElement(Jobs, null));
+ReactCompRender('eoi', /*#__PURE__*/React.createElement(Eois, null));
 ReactCompRender('agencies', /*#__PURE__*/React.createElement(Agencies, null));

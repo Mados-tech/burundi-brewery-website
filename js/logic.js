@@ -17,7 +17,11 @@ function insertTemplates({ locale = 'fr' }) {
     innerHTML('.cover', Cover(locale));
     innerHTML('#footer', Footer(locale, homePath));
 }
+
 insertTemplates({ locale: 'fr' });
+
+
+
 
 
 

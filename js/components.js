@@ -8,30 +8,33 @@ export const NavBar = (locale, homePath) => {
             <h1 class="headline1 logoName">BURUNDI BREWERY S.A</h1>
         </a>
         <div class="navbar-actions flex column-gap-middle">
-            <a href='${homePath}#about' onclick="handleCloseSideMenu()">${{
-            en: 'Who are we ?',
-            fr: 'Qui sommes nous ?',
-        }[locale]}</a>
-            <a href='${homePath}#products'onclick="handleCloseSideMenu()">${{
-            en: 'Our products',
-            fr: 'Nos produits',
-        }[locale]}</a>
-        <a href='${homePath}#contact-us' onclick="handleCloseSideMenu()">${{
-            en: 'Contact us',
-            fr: 'Contactez-nous',
-        }[locale]}</a>
-        <a href='${systemBlogBaseUrl}' onclick="handleCloseSideMenu()">${{
-            en: 'News',
-            fr: "Actualités",
-        }[locale]}</a>
-        <a href='${homePath}jobs' onclick="handleCloseSideMenu()">${{
-            en: 'Job offer',
-            fr: "Offre d'emploi",
-        }[locale]}</a>
-        <a href='${homePath}eoi' onclick="handleCloseSideMenu()">${{
-            en: 'Expression of interest',
-            fr: "Manifestation d'interet",
-        }[locale]}</a>
+            <div class="contextual-arrow" id="c-m-about">
+                <a>Qui sommes nous ?
+                <i class="fa fa-caret-down"></i>
+                </a>
+                <div class="contextual-menu">
+                    <a href="${homePath}#about" onclick="handleCloseSideMenu()">Historique</a>
+                    <a href="${homePath}#profile" onclick="handleCloseSideMenu()">Profile</a>
+                    <a href="${homePath}#vision" onclick="handleCloseSideMenu()">Vision</a>
+                    <a href="${homePath}#social-responsibility" onclick="handleCloseSideMenu()">Responsabilité</a>
+                    <a href="${homePath}team" onclick="handleCloseSideMenu()">Notre équipe</a>
+                    <a href="${homePath}agencies" onclick="handleCloseSideMenu()">Nos agences</a>
+                </div>
+            </div>
+            <div id="products-alizer"></div>
+            <div class="contextual-arrow">
+                <a>Publications
+                <i class="fa fa-caret-down"></i>
+                </a>
+                <div class="contextual-menu">
+                    <a href="${homePath}eoi" onclick="handleCloseSideMenu()">Appels d'offre</a>
+                    <a href="${homePath}jobs" onclick="handleCloseSideMenu()">Recrutments</a>
+                    <a href="${systemBlogBaseUrl}" onclick="handleCloseSideMenu()">Actualités</a>
+                    <a href="${homePath}#footer" onclick="handleCloseSideMenu()">Rejoignez-nous</a>
+                </div>
+            </div>
+            <a href='${homePath}#media' onclick="handleCloseSideMenu()">Media</a>
+            <a href='${homePath}contact-us' onclick="handleCloseSideMenu()">Contactez-nous</a>
         </div>
         <div id="nav-icon">
             <i id="menu-icon-button" class="fa fa-bars action-icon" onclick="handleBarButton()"></i>
@@ -67,20 +70,22 @@ export const Footer = (locale, homePath) => {
     return `
     <div class="footer-header">
         <div class="foo-block">
-            <a href="${homePath}#about">Historique</a>
-            <a href="${homePath}#vision">Vision</a>
-            <a href="${homePath}#social-responsibility">Engagement social</a>
-            <a href="${homePath}#profile">Missions stratégiques </a>
-            <a href="${homePath}#products">Nos produits</a>
-            <a href="${homePath}agencies">Nos agences</a>
-            <a href='${homePath}#staff'>Notre équipe</a>
+        <a href="${homePath}#about" onclick="handleCloseSideMenu()">Historique</a>
+        <a href="${homePath}#profile" onclick="handleCloseSideMenu()">Profile</a>
+        <a href="${homePath}#vision" onclick="handleCloseSideMenu()">Vision</a>
+        <a href="${homePath}#social-responsibility" onclick="handleCloseSideMenu()">Responsabilité</a>
+        <a href="${homePath}team" onclick="handleCloseSideMenu()">Notre équipe</a>
+        <a href="${homePath}agencies" onclick="handleCloseSideMenu()">Nos agences</a>
+        </div>
+        <div id="products-footer"></div>
+        <div class="foo-block">
+        <a href="${homePath}eoi" onclick="handleCloseSideMenu()">Appels d'offre</a>
+        <a href="${homePath}jobs" onclick="handleCloseSideMenu()">Recrutments</a>
+        <a href="${systemBlogBaseUrl}" onclick="handleCloseSideMenu()">Actualités</a>
         </div>
         <div class="foo-block">
-            <a href='${homePath}eoi'>Manifestation d'intérêt</a>
-            <a href='${homePath}jobs'>Offre d'emploi</a>
-            <a href='${systemBlogBaseUrl}'>Actualités</a>
+            <a href="${homePath}#media">Media</a>
             <a href="${homePath}#contact-us">Contactez-nous</a>
-            <a href="${homePath}#media">Galerie</a>
         </div>
         <div class="foo-block">
             <p>Social</p>
