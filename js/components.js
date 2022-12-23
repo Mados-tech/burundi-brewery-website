@@ -56,11 +56,11 @@ export const Footer = (locale, homePath) => {
         <div class="foo-block">
         <a href="${homePath}eoi" onclick="handleCloseSideMenu()">Appels d'offre</a>
         <a href="${homePath}jobs" onclick="handleCloseSideMenu()">Recrutments</a>
-        <a href="${systemBlogBaseUrl}" onclick="handleCloseSideMenu()">Actualités</a>
+        <a href="${homePath}news" onclick="handleCloseSideMenu()">Actualités</a>
         </div>
         <div class="foo-block">
             <a href="${homePath}#media">Media</a>
-            <a href="${homePath}#contact-us">Contactez-nous</a>
+            <a href="${homePath}contact-us">Contactez-nous</a>
         </div>
         <div class="foo-block">
             <p>Social</p>
