@@ -153,7 +153,6 @@ function Gallery({ events = [] }) {
     </div> : <></>
 }
 
-
 function ImagesDisplayer({ images = [] }) {
     console.log(images);
 
@@ -206,7 +205,7 @@ function GalleryImagesDisplayer({ images = [] }) {
             event.stopPropagation();
             handleActions({ isNext: true });
         }}>&#10095;</a>
-        <img className="image-slide" src={images[currentImage].link} alt="" />
+        <img className="image-slide" src={images[currentImage].link} alt={images[currentImage].description} />
         <div className="single-image-description">
             <p>{images[currentImage].description}</p>
             <div className="social-media">
@@ -222,7 +221,6 @@ function GalleryImagesDisplayer({ images = [] }) {
         </div>
     </div > : <p className="p-centered">Aucune image disponible</p>
 }
-
 
 function ContactUsForm() {
 
@@ -782,7 +780,7 @@ function Staff({ members = [] }) {
             {members.map((e) => {
                 const { id, name, phone, email, post, profile } = e;
                 return <div className="single-member">
-                    <img src={profile} alt="" />
+                    <img src={profile} alt={name} />
                     <div className="single-member-info">
                         <p className="p-medium bold">{name}</p>
                         <p className="p-medium">{post}</p>
@@ -792,7 +790,6 @@ function Staff({ members = [] }) {
         </div>
     </div> : <></>
 }
-
 
 function Covers({ covers = [] }) {
 
@@ -837,6 +834,334 @@ function Covers({ covers = [] }) {
     </div> : <></>
 }
 
+
+function NewsCategoriesDisplayer({ onChange = () => { } }) {
+
+    const [fetching, setFetching] = React.useState(false);
+    const [jobs, setJobs] = React.useState([]);
+    const [isAsync, setAsync] = React.useState(false);
+    const [currentJob, setCurrentJob] = React.useState(0);
+
+    function fetchJobs() {
+        if (!fetching) {
+            setFetching(true);
+            setAsync(true);
+            fetchData('blog/findmany/blogcategory_namespace?limit=100').then((response) => {
+                setFetching(false);
+                setAsync(false);
+                const { data } = response;
+                if (data && data?.length) {
+                    setJobs(response.data);
+                }
+                console.log(response);
+            })
+        }
+    }
+
+
+    React.useEffect(() => {
+        fetchJobs();
+    }, []);
+
+    return !isAsync
+        ? <div className='categories_displayer'>
+            <div className='categories_displayer_list_category'>
+                <p className='categories_displayer_category'
+                    id={currentJob === 0 ? 'categories_displayer_category_selected' : ''}
+                    key={0}
+                    value={0}
+                    onClick={(event) => {
+                        event.stopPropagation();
+                        if (currentJob !== 0) {
+                            setCurrentJob(0);
+                            onChange(undefined);
+                        }
+                    }}>A la une</p>
+                {jobs.map((e) => {
+                    return <p
+                        className='categories_displayer_category'
+                        id={currentJob === e.id ? 'categories_displayer_category_selected' : ''}
+                        key={e.id}
+                        value={e.id}
+                        onClick={(event) => {
+                            event.stopPropagation();
+                            if (currentJob !== e.id) {
+                                setCurrentJob(e.id);
+                                onChange(e.id);
+                            }
+                        }}
+                    >{String(e.name).toLocaleUpperCase()}</p>
+                })}
+            </div>
+        </div>
+        : <div className='ct_displayer'>
+            <div className='ct_displayer_category'>
+                <div className='shimmer' />
+                <div className='shimmer' />
+                <div className='shimmer' />
+                <div className='shimmer' />
+            </div>
+        </div>
+}
+
+function News() {
+
+    const [fetching, setFetching] = React.useState(false);
+    const [jobs, setJobs] = React.useState([]);
+    const [isAsync, setAsync] = React.useState(false);
+    const [wannaApply, setWannaApply] = React.useState(false);
+    const [currentJob, setCurrentJob] = React.useState({});
+    const [currentCategoryId, setCatId] = React.useState(undefined);
+
+    function fetchJobs({ id = undefined }) {
+        const url =
+            id !== undefined ? `findone/blogcategory_namespace/${Number(id)}?more=yes`
+                : 'findmany/blog_namespace?page=0';
+        console.log('testtt', url);
+        if (!fetching) {
+            setFetching(true);
+            setAsync(true);
+            fetchData(`blog/${url}`).then((response) => {
+                setFetching(false);
+                setAsync(false);
+                if (id !== undefined) {
+                    const { blog } = response;
+                    if (blog && blog?.length) {
+                        setJobs(blog);
+                    }
+                } else {
+                    const { data } = response;
+                    if (data && data?.length) {
+                        setJobs(response.data);
+                    }
+                }
+                console.log(response);
+            })
+        }
+    }
+
+
+    React.useEffect(() => {
+        fetchJobs({ id: currentCategoryId });
+    }, [currentCategoryId]);
+
+
+
+    return <div className="job-displayer">
+        <h1 className="large-title">Actualités</h1>
+        <NewsCategoriesDisplayer onChange={(id) => {
+            setCatId(id);
+        }} />
+        {jobs.length && !isAsync
+            ? <div className='articles-displayer'>
+                {jobs.map((article) => {
+                    return <a className='article_card' href={`/article/#${article.id}`}>
+                        <img className='article_card_img' src={article.cover ? `${article.cover}` : 'https://archive.org/download/no-photo-available/no-photo-available.png'} alt='' />
+                        <div className='article_card_info'>
+                            <div className='timarticle_card_info_time_view'>
+                                <p>{new Date(article.createdAt).toLocaleString()}</p>
+                                <div className='timarticle_card_info_time_view_eye'>
+                                    <i className='fa fa-eye' />
+                                    <h6>{article.view}</h6>
+                                </div>
+                            </div>
+                            <p className='article_card_info_topic'>{String(article?.category?.name).toLocaleUpperCase()}</p>
+                            <h3 className=''>{article?.title}</h3>
+                        </div>
+                    </a>
+                })}
+            </div>
+            : isAsync === true
+                ? <p>Veuillez patienter ...</p>
+                : <p>Aucun article  disponible</p>
+        }
+    </div>
+}
+
+function ArticleDetails() {
+
+    const [fetching, setFetching] = React.useState(false);
+    const [jobs, setJobs] = React.useState([]);
+    const [isAsync, setAsync] = React.useState(false);
+    const [wannaApply, setWannaApply] = React.useState(false);
+    const [currentJob, setCurrentJob] = React.useState({});
+    const [article, setArticle] = React.useState({});
+
+    function fetchJobs() {
+        if (!fetching) {
+            setFetching(true);
+            setAsync(true);
+            const hashF = window.location.hash;
+            fetchData(`blog/findone/blog_namespace/${Number(hashF.replaceAll("#", ""))}?more=true`).then((response) => {
+                setFetching(false);
+                setAsync(false);
+                const { no_object } = response;
+                if (!no_object) {
+                    setArticle(response);
+                    fetchMore({ id: response.category.id, articleId: response.id });
+                }
+                console.log(response);
+            })
+        }
+    }
+
+    function fetchMore({ id = undefined, articleId = undefined }) {
+        if (id === undefined) return;
+        if (!fetching) {
+            fetchData(`blog/findone/blogcategory_namespace/${Number(id)}?more=yes`).then((response) => {
+                const { blog } = response;
+                if (blog && blog?.length) {
+                    setJobs(blog);
+                }
+                console.log(response);
+            })
+        }
+    }
+
+    React.useEffect(() => {
+        fetchJobs();
+        window.addEventListener("hashchange", function set() {
+            const hashF = window.location.hash;
+            setArticle({});
+            fetchJobs();
+        }, false);
+
+        return () => {
+            window.removeEventListener('hashchange', () => { }, false);
+        }
+    }, [])
+
+
+    const { id, title, view, createdAt, overView, cover, description, comment, category } = article;
+    const isThereMore = jobs.filter((element) => element.id !== id).length > 0;
+    return <div className="job-displayer">
+        {Object.keys(article).length
+            ? <div className='article-details_diplayer'>
+                <div className='article_details_part'>
+                    <div className='article_details_part article_details_part_top'>
+                        <img src={cover ? `${cover}` : 'https://archive.org/download/no-photo-available/no-photo-available.png'} alt={title ?? ''} />
+                        <div className='timarticle_card_info_time_view'>
+                            <p>{createdAt ? new Date(createdAt).toLocaleString() : ''}</p>
+                            <div className='timarticle_card_info_time_view_eye'>
+                                <i className='fa fa-eye' />
+                                <h6>{view ?? 0}</h6>
+                            </div>
+                        </div>
+                        <p className='article_card_info_topic'>{String(category?.name).toLocaleUpperCase()}</p>
+                        <h1>{title ?? ''}</h1>
+                        <p className='art-overview'>{overView ?? ''}</p>
+                        <div className='divider' />
+                        <div dangerouslySetInnerHTML={{ __html: description ?? '' }} />
+                    </div>
+                    <ArticleDetailsComment comments={comment} articleId={id} />
+                </div>
+                <div>
+                    {isThereMore ? <h2 className='more_text'>Plus d'articles</h2> : <></>}
+                    <div className='red_separator' />
+                    <div className='divider' /><div className='divider' /><div className='divider' />
+                    <div className='more-articles-displayer'>
+                        {isThereMore ? <>{jobs.filter((element) => element.id !== id).map((article) => {
+                            return <a className='article_card_two' href={`/article/#${article.id}`}>
+                                <img className='article_card_img_two' src={article.cover ? `${article.cover}` : 'https://archive.org/download/no-photo-available/no-photo-available.png'} alt={article?.title} />
+                                <div className='article_card_info article_card_info_two'>
+                                    <div className='timarticle_card_info_time_view'>
+                                        <p>{new Date(article.createdAt).toLocaleString()}</p>
+                                        <div className='timarticle_card_info_time_view_eye'>
+                                            <i className='fa fa-eye' />
+                                            <h6>{article.view}</h6>
+                                        </div>
+                                    </div>
+                                    <p className='article_card_info_topic'>{String(article?.category?.name).toLocaleUpperCase()}</p>
+                                    <h3 className=''>{article?.title}</h3>
+                                </div>
+                            </a>
+                        })}</> : <></>}
+                    </div>
+                </div>
+            </div>
+            : isAsync === true
+                ? <p>Veuillez patienter ...</p>
+                : <p>Article introuvable</p>
+        }
+    </div>
+}
+
+function ArticleDetailsComment({ comments = [], articleId = undefined }) {
+    const [email, setEmail] = React.useState('');
+    const [isLoading, setLoading] = React.useState(false);
+    const [errorMessage, setError] = React.useState('');
+    const [successMessage, setSuccess] = React.useState('');
+    const [incomments, setComments] = React.useState([]);
+
+    const formRef = React.useRef();
+
+    function sendMail() {
+        setSuccess('');
+        setError('');
+        if (email.length) {
+            setLoading(true);
+            postData(`blog/comment_on_post/${Number(articleId ?? 0)}`, { Text: email }).then((response) => {
+                setLoading(false);
+                if (response.id) {
+                    setComments([response, ...incomments]);
+                    setSuccess('Votre commentaire a été enregistré avec succès');
+                    formRef.current.reset();
+                } else {
+                    console.log('Failure', response);
+                    setError("Une erreur s'est produite,vérifiez votre connexion Internet.")
+                }
+            })
+        } else {
+            setError('Tout les champs sont obligatoires.');
+        }
+
+    }
+
+    React.useEffect(() => {
+        setComments(comments)
+    }, [])
+
+    return (
+        <>
+            <div className='flex-row column-gap-middle text-close'>
+                {errorMessage.length ? <p className='p-error'>{errorMessage}</p> : <></>}
+                {successMessage.length ? <p className='p-success'>{successMessage}</p> : <></>}
+                {errorMessage.length || successMessage.length ? <p className='close' onClick={(event) => {
+                    event.stopPropagation();
+                    setSuccess('');
+                    setError('');
+                }}>Fermer</p> : <></>}
+            </div>
+            <form ref={formRef} className='form-row-s-button'
+                onChange={(event) => {
+                    event.stopPropagation();
+                    setEmail(event.target.value);
+                }}
+                onSubmit={(event) => {
+                    event.preventDefault();
+                    sendMail();
+                }}
+            >
+                <input required type='text' placeholder="Dites-nous ce que vous avez en tête..." name='Text' />
+                <button className='comments_articles_input_button' type='submit'>{isLoading ? <i className='fa fa-spinner fa-spin' /> : <i className='fa fa-paper-plane' />}</button>
+            </form>
+            <div className='divider' />
+            {incomments.length ? <div className='comments_articles_comments_list'>
+                {incomments.map((e) => {
+                    return <div key={e.id} className='comments_articles_comment'>
+                        <div className='comments_articles_comment_header'>
+                            <img src={`https://avatars.dicebear.com/api/personas/male/${Math.floor(Math.random() * 46542655127517)}.png`} alt='' />
+                            <p>{new Date(e.createdAt).toLocaleString()}</p>
+                        </div>
+                        <p id='comments_articles_comment_body'>{e.content}</p>
+                    </div>
+                })}
+            </div> : <></>}
+        </>
+    )
+}
+
+
 function doThisForAll(key, whatToDo) {
     if (document.querySelector(key)) {
         document.querySelectorAll(key).forEach((element) => {
@@ -851,11 +1176,6 @@ function ReactCompRender(id, component) {
     doThisForAll(`#${id}`, (element) => {
         ReactDOM.createRoot(element).render(component);
     })
-    // const element = document.getElementById(id);
-    // if (element) {
-    //     console.log(id, 'exist in this page');
-    //     ReactDOM.createRoot(element).render(component);
-    // }
 }
 
 fetchData('blog/view').then((response) => {
@@ -869,9 +1189,12 @@ fetchData('blog/view').then((response) => {
     ReactCompRender('slide-from', <Covers covers={cover} />);
 })
 
+
 ReactCompRender('newsLetterForm', <SubscribeToNewsLetter />);
 ReactCompRender('contact-us-form', <ContactUsForm />);
 ReactCompRender('jobs', <Jobs />);
+ReactCompRender('news', <News />);
+ReactCompRender('view-article', <ArticleDetails />);
 ReactCompRender('eoi', <Eois />);
 ReactCompRender('agencies', <Agencies />);
 

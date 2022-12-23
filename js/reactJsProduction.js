@@ -245,7 +245,7 @@ function GalleryImagesDisplayer({
   }, "\u276F"), /*#__PURE__*/React.createElement("img", {
     className: "image-slide",
     src: images[currentImage].link,
-    alt: ""
+    alt: images[currentImage].description
   }), /*#__PURE__*/React.createElement("div", {
     className: "single-image-description"
   }, /*#__PURE__*/React.createElement("p", null, images[currentImage].description), /*#__PURE__*/React.createElement("div", {
@@ -924,7 +924,7 @@ function Staff({
       className: "single-member"
     }, /*#__PURE__*/React.createElement("img", {
       src: profile,
-      alt: ""
+      alt: name
     }), /*#__PURE__*/React.createElement("div", {
       className: "single-member-info"
     }, /*#__PURE__*/React.createElement("p", {
@@ -975,6 +975,377 @@ function Covers({
     }));
   })) : /*#__PURE__*/React.createElement(React.Fragment, null);
 }
+function NewsCategoriesDisplayer({
+  onChange = () => {}
+}) {
+  const [fetching, setFetching] = React.useState(false);
+  const [jobs, setJobs] = React.useState([]);
+  const [isAsync, setAsync] = React.useState(false);
+  const [currentJob, setCurrentJob] = React.useState(0);
+  function fetchJobs() {
+    if (!fetching) {
+      setFetching(true);
+      setAsync(true);
+      fetchData('blog/findmany/blogcategory_namespace?limit=100').then(response => {
+        setFetching(false);
+        setAsync(false);
+        const {
+          data
+        } = response;
+        if (data && data !== null && data !== void 0 && data.length) {
+          setJobs(response.data);
+        }
+        console.log(response);
+      });
+    }
+  }
+  React.useEffect(() => {
+    fetchJobs();
+  }, []);
+  return !isAsync ? /*#__PURE__*/React.createElement("div", {
+    className: "categories_displayer"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "categories_displayer_list_category"
+  }, /*#__PURE__*/React.createElement("p", {
+    className: "categories_displayer_category",
+    id: currentJob === 0 ? 'categories_displayer_category_selected' : '',
+    key: 0,
+    value: 0,
+    onClick: event => {
+      event.stopPropagation();
+      if (currentJob !== 0) {
+        setCurrentJob(0);
+        onChange(undefined);
+      }
+    }
+  }, "A la une"), jobs.map(e => {
+    return /*#__PURE__*/React.createElement("p", {
+      className: "categories_displayer_category",
+      id: currentJob === e.id ? 'categories_displayer_category_selected' : '',
+      key: e.id,
+      value: e.id,
+      onClick: event => {
+        event.stopPropagation();
+        if (currentJob !== e.id) {
+          setCurrentJob(e.id);
+          onChange(e.id);
+        }
+      }
+    }, String(e.name).toLocaleUpperCase());
+  }))) : /*#__PURE__*/React.createElement("div", {
+    className: "ct_displayer"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "ct_displayer_category"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "shimmer"
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "shimmer"
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "shimmer"
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "shimmer"
+  })));
+}
+function News() {
+  const [fetching, setFetching] = React.useState(false);
+  const [jobs, setJobs] = React.useState([]);
+  const [isAsync, setAsync] = React.useState(false);
+  const [wannaApply, setWannaApply] = React.useState(false);
+  const [currentJob, setCurrentJob] = React.useState({});
+  const [currentCategoryId, setCatId] = React.useState(undefined);
+  function fetchJobs({
+    id = undefined
+  }) {
+    const url = id !== undefined ? `findone/blogcategory_namespace/${Number(id)}?more=yes` : 'findmany/blog_namespace?page=0';
+    console.log('testtt', url);
+    if (!fetching) {
+      setFetching(true);
+      setAsync(true);
+      fetchData(`blog/${url}`).then(response => {
+        setFetching(false);
+        setAsync(false);
+        if (id !== undefined) {
+          const {
+            blog
+          } = response;
+          if (blog && blog !== null && blog !== void 0 && blog.length) {
+            setJobs(blog);
+          }
+        } else {
+          const {
+            data
+          } = response;
+          if (data && data !== null && data !== void 0 && data.length) {
+            setJobs(response.data);
+          }
+        }
+        console.log(response);
+      });
+    }
+  }
+  React.useEffect(() => {
+    fetchJobs({
+      id: currentCategoryId
+    });
+  }, [currentCategoryId]);
+  return /*#__PURE__*/React.createElement("div", {
+    className: "job-displayer"
+  }, /*#__PURE__*/React.createElement("h1", {
+    className: "large-title"
+  }, "Actualit\xE9s"), /*#__PURE__*/React.createElement(NewsCategoriesDisplayer, {
+    onChange: id => {
+      setCatId(id);
+    }
+  }), jobs.length && !isAsync ? /*#__PURE__*/React.createElement("div", {
+    className: "articles-displayer"
+  }, jobs.map(article => {
+    var _article$category;
+    return /*#__PURE__*/React.createElement("a", {
+      className: "article_card",
+      href: `/article/#${article.id}`
+    }, /*#__PURE__*/React.createElement("img", {
+      className: "article_card_img",
+      src: article.cover ? `${article.cover}` : 'https://archive.org/download/no-photo-available/no-photo-available.png',
+      alt: ""
+    }), /*#__PURE__*/React.createElement("div", {
+      className: "article_card_info"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "timarticle_card_info_time_view"
+    }, /*#__PURE__*/React.createElement("p", null, new Date(article.createdAt).toLocaleString()), /*#__PURE__*/React.createElement("div", {
+      className: "timarticle_card_info_time_view_eye"
+    }, /*#__PURE__*/React.createElement("i", {
+      className: "fa fa-eye"
+    }), /*#__PURE__*/React.createElement("h6", null, article.view))), /*#__PURE__*/React.createElement("p", {
+      className: "article_card_info_topic"
+    }, String(article === null || article === void 0 ? void 0 : (_article$category = article.category) === null || _article$category === void 0 ? void 0 : _article$category.name).toLocaleUpperCase()), /*#__PURE__*/React.createElement("h3", {
+      className: ""
+    }, article === null || article === void 0 ? void 0 : article.title)));
+  })) : isAsync === true ? /*#__PURE__*/React.createElement("p", null, "Veuillez patienter ...") : /*#__PURE__*/React.createElement("p", null, "Aucun article  disponible"));
+}
+function ArticleDetails() {
+  const [fetching, setFetching] = React.useState(false);
+  const [jobs, setJobs] = React.useState([]);
+  const [isAsync, setAsync] = React.useState(false);
+  const [wannaApply, setWannaApply] = React.useState(false);
+  const [currentJob, setCurrentJob] = React.useState({});
+  const [article, setArticle] = React.useState({});
+  function fetchJobs() {
+    if (!fetching) {
+      setFetching(true);
+      setAsync(true);
+      const hashF = window.location.hash;
+      fetchData(`blog/findone/blog_namespace/${Number(hashF.replaceAll("#", ""))}?more=true`).then(response => {
+        setFetching(false);
+        setAsync(false);
+        const {
+          no_object
+        } = response;
+        if (!no_object) {
+          setArticle(response);
+          fetchMore({
+            id: response.category.id,
+            articleId: response.id
+          });
+        }
+        console.log(response);
+      });
+    }
+  }
+  function fetchMore({
+    id = undefined,
+    articleId = undefined
+  }) {
+    if (id === undefined) return;
+    if (!fetching) {
+      fetchData(`blog/findone/blogcategory_namespace/${Number(id)}?more=yes`).then(response => {
+        const {
+          blog
+        } = response;
+        if (blog && blog !== null && blog !== void 0 && blog.length) {
+          setJobs(blog);
+        }
+        console.log(response);
+      });
+    }
+  }
+  React.useEffect(() => {
+    fetchJobs();
+    window.addEventListener("hashchange", function set() {
+      const hashF = window.location.hash;
+      setArticle({});
+      fetchJobs();
+    }, false);
+    return () => {
+      window.removeEventListener('hashchange', () => {}, false);
+    };
+  }, []);
+  const {
+    id,
+    title,
+    view,
+    createdAt,
+    overView,
+    cover,
+    description,
+    comment,
+    category
+  } = article;
+  const isThereMore = jobs.filter(element => element.id !== id).length > 0;
+  return /*#__PURE__*/React.createElement("div", {
+    className: "job-displayer"
+  }, Object.keys(article).length ? /*#__PURE__*/React.createElement("div", {
+    className: "article-details_diplayer"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "article_details_part"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "article_details_part article_details_part_top"
+  }, /*#__PURE__*/React.createElement("img", {
+    src: cover ? `${cover}` : 'https://archive.org/download/no-photo-available/no-photo-available.png',
+    alt: title !== null && title !== void 0 ? title : ''
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "timarticle_card_info_time_view"
+  }, /*#__PURE__*/React.createElement("p", null, createdAt ? new Date(createdAt).toLocaleString() : ''), /*#__PURE__*/React.createElement("div", {
+    className: "timarticle_card_info_time_view_eye"
+  }, /*#__PURE__*/React.createElement("i", {
+    className: "fa fa-eye"
+  }), /*#__PURE__*/React.createElement("h6", null, view !== null && view !== void 0 ? view : 0))), /*#__PURE__*/React.createElement("p", {
+    className: "article_card_info_topic"
+  }, String(category === null || category === void 0 ? void 0 : category.name).toLocaleUpperCase()), /*#__PURE__*/React.createElement("h1", null, title !== null && title !== void 0 ? title : ''), /*#__PURE__*/React.createElement("p", {
+    className: "art-overview"
+  }, overView !== null && overView !== void 0 ? overView : ''), /*#__PURE__*/React.createElement("div", {
+    className: "divider"
+  }), /*#__PURE__*/React.createElement("div", {
+    dangerouslySetInnerHTML: {
+      __html: description !== null && description !== void 0 ? description : ''
+    }
+  })), /*#__PURE__*/React.createElement(ArticleDetailsComment, {
+    comments: comment,
+    articleId: id
+  })), /*#__PURE__*/React.createElement("div", null, isThereMore ? /*#__PURE__*/React.createElement("h2", {
+    className: "more_text"
+  }, "Plus d'articles") : /*#__PURE__*/React.createElement(React.Fragment, null), /*#__PURE__*/React.createElement("div", {
+    className: "red_separator"
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "divider"
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "divider"
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "divider"
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "more-articles-displayer"
+  }, isThereMore ? /*#__PURE__*/React.createElement(React.Fragment, null, jobs.filter(element => element.id !== id).map(article => {
+    var _article$category2;
+    return /*#__PURE__*/React.createElement("a", {
+      className: "article_card_two",
+      href: `/article/#${article.id}`
+    }, /*#__PURE__*/React.createElement("img", {
+      className: "article_card_img_two",
+      src: article.cover ? `${article.cover}` : 'https://archive.org/download/no-photo-available/no-photo-available.png',
+      alt: article === null || article === void 0 ? void 0 : article.title
+    }), /*#__PURE__*/React.createElement("div", {
+      className: "article_card_info article_card_info_two"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "timarticle_card_info_time_view"
+    }, /*#__PURE__*/React.createElement("p", null, new Date(article.createdAt).toLocaleString()), /*#__PURE__*/React.createElement("div", {
+      className: "timarticle_card_info_time_view_eye"
+    }, /*#__PURE__*/React.createElement("i", {
+      className: "fa fa-eye"
+    }), /*#__PURE__*/React.createElement("h6", null, article.view))), /*#__PURE__*/React.createElement("p", {
+      className: "article_card_info_topic"
+    }, String(article === null || article === void 0 ? void 0 : (_article$category2 = article.category) === null || _article$category2 === void 0 ? void 0 : _article$category2.name).toLocaleUpperCase()), /*#__PURE__*/React.createElement("h3", {
+      className: ""
+    }, article === null || article === void 0 ? void 0 : article.title)));
+  })) : /*#__PURE__*/React.createElement(React.Fragment, null)))) : isAsync === true ? /*#__PURE__*/React.createElement("p", null, "Veuillez patienter ...") : /*#__PURE__*/React.createElement("p", null, "Article introuvable"));
+}
+function ArticleDetailsComment({
+  comments = [],
+  articleId = undefined
+}) {
+  const [email, setEmail] = React.useState('');
+  const [isLoading, setLoading] = React.useState(false);
+  const [errorMessage, setError] = React.useState('');
+  const [successMessage, setSuccess] = React.useState('');
+  const [incomments, setComments] = React.useState([]);
+  const formRef = React.useRef();
+  function sendMail() {
+    setSuccess('');
+    setError('');
+    if (email.length) {
+      setLoading(true);
+      postData(`blog/comment_on_post/${Number(articleId !== null && articleId !== void 0 ? articleId : 0)}`, {
+        Text: email
+      }).then(response => {
+        setLoading(false);
+        if (response.id) {
+          setComments([response, ...incomments]);
+          setSuccess('Votre commentaire a été enregistré avec succès');
+          formRef.current.reset();
+        } else {
+          console.log('Failure', response);
+          setError("Une erreur s'est produite,vérifiez votre connexion Internet.");
+        }
+      });
+    } else {
+      setError('Tout les champs sont obligatoires.');
+    }
+  }
+  React.useEffect(() => {
+    setComments(comments);
+  }, []);
+  return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    className: "flex-row column-gap-middle text-close"
+  }, errorMessage.length ? /*#__PURE__*/React.createElement("p", {
+    className: "p-error"
+  }, errorMessage) : /*#__PURE__*/React.createElement(React.Fragment, null), successMessage.length ? /*#__PURE__*/React.createElement("p", {
+    className: "p-success"
+  }, successMessage) : /*#__PURE__*/React.createElement(React.Fragment, null), errorMessage.length || successMessage.length ? /*#__PURE__*/React.createElement("p", {
+    className: "close",
+    onClick: event => {
+      event.stopPropagation();
+      setSuccess('');
+      setError('');
+    }
+  }, "Fermer") : /*#__PURE__*/React.createElement(React.Fragment, null)), /*#__PURE__*/React.createElement("form", {
+    ref: formRef,
+    className: "form-row-s-button",
+    onChange: event => {
+      event.stopPropagation();
+      setEmail(event.target.value);
+    },
+    onSubmit: event => {
+      event.preventDefault();
+      sendMail();
+    }
+  }, /*#__PURE__*/React.createElement("input", {
+    required: true,
+    type: "text",
+    placeholder: "Dites-nous ce que vous avez en t\xEAte...",
+    name: "Text"
+  }), /*#__PURE__*/React.createElement("button", {
+    className: "comments_articles_input_button",
+    type: "submit"
+  }, isLoading ? /*#__PURE__*/React.createElement("i", {
+    className: "fa fa-spinner fa-spin"
+  }) : /*#__PURE__*/React.createElement("i", {
+    className: "fa fa-paper-plane"
+  }))), /*#__PURE__*/React.createElement("div", {
+    className: "divider"
+  }), incomments.length ? /*#__PURE__*/React.createElement("div", {
+    className: "comments_articles_comments_list"
+  }, incomments.map(e => {
+    return /*#__PURE__*/React.createElement("div", {
+      key: e.id,
+      className: "comments_articles_comment"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "comments_articles_comment_header"
+    }, /*#__PURE__*/React.createElement("img", {
+      src: `https://avatars.dicebear.com/api/personas/male/${Math.floor(Math.random() * 46542655127517)}.png`,
+      alt: ""
+    }), /*#__PURE__*/React.createElement("p", null, new Date(e.createdAt).toLocaleString())), /*#__PURE__*/React.createElement("p", {
+      id: "comments_articles_comment_body"
+    }, e.content));
+  })) : /*#__PURE__*/React.createElement(React.Fragment, null));
+}
 function doThisForAll(key, whatToDo) {
   if (document.querySelector(key)) {
     document.querySelectorAll(key).forEach(element => {
@@ -987,13 +1358,7 @@ function ReactCompRender(id, component) {
   doThisForAll(`#${id}`, element => {
     ReactDOM.createRoot(element).render(component);
   });
-  // const element = document.getElementById(id);
-  // if (element) {
-  //     console.log(id, 'exist in this page');
-  //     ReactDOM.createRoot(element).render(component);
-  // }
 }
-
 fetchData('blog/view').then(response => {
   console.log('Theee', response);
   const {
@@ -1024,5 +1389,7 @@ fetchData('blog/view').then(response => {
 ReactCompRender('newsLetterForm', /*#__PURE__*/React.createElement(SubscribeToNewsLetter, null));
 ReactCompRender('contact-us-form', /*#__PURE__*/React.createElement(ContactUsForm, null));
 ReactCompRender('jobs', /*#__PURE__*/React.createElement(Jobs, null));
+ReactCompRender('news', /*#__PURE__*/React.createElement(News, null));
+ReactCompRender('view-article', /*#__PURE__*/React.createElement(ArticleDetails, null));
 ReactCompRender('eoi', /*#__PURE__*/React.createElement(Eois, null));
 ReactCompRender('agencies', /*#__PURE__*/React.createElement(Agencies, null));

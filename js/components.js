@@ -29,8 +29,7 @@ export const NavBar = (locale, homePath) => {
                 <div class="contextual-menu">
                     <a href="${homePath}eoi" onclick="handleCloseSideMenu()">Appels d'offre</a>
                     <a href="${homePath}jobs" onclick="handleCloseSideMenu()">Recrutments</a>
-                    <a href="${systemBlogBaseUrl}" onclick="handleCloseSideMenu()">Actualités</a>
-                    <a href="${homePath}#footer" onclick="handleCloseSideMenu()">Rejoignez-nous</a>
+                    <a href="${homePath}news" onclick="handleCloseSideMenu()">Actualités</a>
                 </div>
             </div>
             <a href='${homePath}#media' onclick="handleCloseSideMenu()">Media</a>
@@ -39,30 +38,6 @@ export const NavBar = (locale, homePath) => {
         <div id="nav-icon">
             <i id="menu-icon-button" class="fa fa-bars action-icon" onclick="handleBarButton()"></i>
         </div>
-    `;
-}
-
-export const Cover = (locale) => {
-    return `
-    <div class="curtain"></div>
-    <div class="curtain2"></div>
-    <div class="cover-body">
-        <div class="since flex column-gap-middle">
-            <p>2012</p>
-            <div class="range">
-                <span class="range-round"></span>
-            </div>
-            <p>${new Date().getFullYear()}</p>
-        </div>
-        <h1 class="cover-title">${{
-            en: 'Burundi Brewery',
-            fr: 'La brasserie Burundi Brewery',
-        }[locale]}</h1>
-        <p class="cover-subtitle">${{
-            en: 'Leader in fruit-based drinks on the Burundi market.',
-            fr: 'Leader des boissons à base de fruits sur le marché burundais.',
-        }[locale]}</p>
-    </div>
     `;
 }
 
