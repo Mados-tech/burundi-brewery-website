@@ -1319,7 +1319,7 @@ function ArticleDetailsComment({
   }, /*#__PURE__*/React.createElement("input", {
     required: true,
     type: "text",
-    placeholder: "Dites-nous ce que vous avez en t\xEAte...",
+    placeholder: "Entrez votre commentaire...",
     name: "Text"
   }), /*#__PURE__*/React.createElement("button", {
     className: "comments_articles_input_button",
