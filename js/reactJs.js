@@ -1,5 +1,5 @@
 // const systemBaseUrl = 'http://192.168.43.114:8000/brewery/api';
-const systemBaseUrl = 'https://brewery.madosgroup.com/brewery/api';
+const systemBaseUrl = 'https://backend.burundibrewery.com/brewery/api';
 
 async function postData(url = '', data = {}) {
     return await fetch(`${systemBaseUrl}/${url}`, {
